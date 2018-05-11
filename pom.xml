@@ -4,7 +4,7 @@
     <groupId>home.javaphite</groupId>
     <artifactId>beholder-ms</artifactId>
     <packaging>jar</packaging>
-    <version>initial-state</version>
+    <version>0.0.1</version>
     <name>beholder-ms</name>
 
     <properties>
@@ -49,6 +49,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- /JUNIT -->
 
         <!-- LOGGING TOOLS-->
@@ -69,6 +75,11 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
         </dependency>
         <!-- /LOGBACK -->
         <!-- /LOGGING TOOLS -->
