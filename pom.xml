@@ -76,13 +76,12 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+        <!--  -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
-        <!-- /LOGBACK -->
-        <!-- /LOGGING TOOLS -->
 
     </dependencies>
 
