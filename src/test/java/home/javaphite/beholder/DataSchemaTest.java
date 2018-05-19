@@ -1,15 +1,13 @@
 package home.javaphite.beholder;
 
+import home.javaphite.testing.LoggedTestCase;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Tag("home.javaphite.beholder.DataSchema")
-class DataSchemaTest extends LoggedTestCase{
+class DataSchemaTest extends LoggedTestCase {
 
     enum DataPreset{
         // Base data variant
@@ -57,7 +55,7 @@ class DataSchemaTest extends LoggedTestCase{
         }
     }
 
-    @Test
+    /*@Test
     void isValidDataMethodMustReturnTrueOnCompatibleData(){
         DataSchema givenSchema= schemaOf(DataPreset.STR_INT_DEC_BOOL);
         DataPreset givenDataPreset = DataPreset.STR_INT_DEC_BOOL;
@@ -171,7 +169,7 @@ class DataSchemaTest extends LoggedTestCase{
         description.then("Result must be {}", expectedResult);
 
         check(given, (givens)->(givens[0].equals(givens[1])), expectedResult, description);
-    }
+    }*/
 
     // Helper method: creates DataSchema stub from DataPreset
     private DataSchema schemaOf(DataPreset preset){

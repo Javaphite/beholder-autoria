@@ -1,4 +1,4 @@
-package home.javaphite.beholder;
+package home.javaphite.testing;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +10,7 @@ import org.slf4j.MDC;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class LoggedTestCase extends TestCase {
+public abstract class LoggedTestCase extends TestCase {
     private static final Map<String, String> messages = new HashMap<>();
 
     @BeforeAll
