@@ -31,7 +31,7 @@ abstract class LoggedTestCase extends TestCase {
     void initEach(TestInfo testInfo){
         //TODO: there must be better way to get test method clear name!
         logger.info(messages.get("startTest"),
-                testInfo.getTestMethod().toString().replaceAll(".+(?=(\\.[^.(]+\\())", "").replaceAll("\\.?]?", ""));
+                testInfo.getTestMethod().toString().replaceAll(".+(?=(\\.[^.(]+\\())", "").replaceAll("\\.?]?(\\(.*\\))?", ""));
     }
 
     @AfterAll

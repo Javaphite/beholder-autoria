@@ -2,6 +2,8 @@ package home.javaphite.beholder;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,7 +35,6 @@ class DataSchemaTest extends LoggedTestCase{
         DataPreset(String[] fields, Object[] values){
             this.presetValues=values;
             this.presetFields=fields;
-
         }
 
         private Object[] presetValues;
@@ -60,6 +61,7 @@ class DataSchemaTest extends LoggedTestCase{
     void isValidDataMethodMustReturnTrueOnCompatibleData(){
         DataSchema givenSchema= schemaOf(DataPreset.STR_INT_DEC_BOOL);
         DataPreset givenDataPreset = DataPreset.STR_INT_DEC_BOOL;
+        Boolean expectedResult=Boolean.TRUE;
 
         Object[] given=new Object[2];
         given[0]=givenSchema;
@@ -69,135 +71,123 @@ class DataSchemaTest extends LoggedTestCase{
         description.given("DataSchema: {}", givenSchema);
         description.given("AND data: {}", givenDataPreset);
         description.when("Data tested for validity with isValidData method");
-        description.then("Result must be {}", Boolean.TRUE);
+        description.then("Result must be {}", expectedResult);
 
         check(given,
-                (g)->((DataSchema) g[0]).isValidData((Map<String, Object>) g[1]),
-                    Boolean.TRUE, description);
-    }
-
-    /*@ParameterizedTest
-    @EnumSource(value= DataPreset.class,
-                names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
-    void isValidDataMethodTest(DataPreset testedPreset) {
-        DataPreset schemaPreset = DataPreset.STR_INT_DEC_BOOL;
-        DataSchema schema= schemaOf(schemaPreset);
-        Map<String, Object> testedData=dataOf(testedPreset);
-
-        StringBuilder messageBuilder=new StringBuilder("INPUT:");
-        messageBuilder.append(printPreset(schemaPreset, "SCHEMA"));
-        messageBuilder.append(printPreset(testedPreset, "DATA"));
-        logger.trace(messageBuilder.toString());
-
-        try {
-            boolean checkResult=schema.isValidData(testedData);
-
-            if (schemaPreset==testedPreset) {
-                logger.trace(LogMsg.TEST_RESULT.msg, "expected isValidData return true, get - " + checkResult);
-
-                assertTrue(checkResult, LogMsg.FAIL.msg);
-                logger.trace(LogMsg.SUCCESS.msg);
-            } else {
-                logger.trace(LogMsg.TEST_RESULT.msg, "expected isValidData return false, get - " + checkResult);
-
-                assertFalse(checkResult, LogMsg.FAIL.msg);
-                logger.trace(LogMsg.SUCCESS.msg);
-            }
-        } catch (AssertionError error) {
-            logger.error(error.getMessage());
-            throw new AssertionError(error);
-        }
+                (givens)->((DataSchema) givens[0]).isValidData((Map<String, Object>) givens[1]),
+                expectedResult, description);
     }
 
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
-            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
-    @Tag("hashCode")
-     void hashCodeTest(DataPreset targetPreset) {
-        DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
-        DataSchema sampleSchema= schemaOf(samplePreset);
-        DataSchema targetSchema= schemaOf(targetPreset);
+                names={"STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
+    void isValidDataMethodMustReturnFalseOnAnyIncompatibleData(DataPreset incompatibleData){
+        DataSchema givenSchema= schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        DataPreset givenDataPreset = incompatibleData;
+        Boolean expectedResult=Boolean.FALSE;
 
-        StringBuilder messageBuilder=new StringBuilder("INPUT:");
-        messageBuilder.append(printPreset(samplePreset, "Sample"));
-        messageBuilder.append(" Resulted DataSchema's hashcode - ");
-        messageBuilder.append(sampleSchema.hashCode());
-        messageBuilder.append(printPreset(targetPreset, "Target"));
-        messageBuilder.append(" Resulted DataSchema's hashcode - ");
-        messageBuilder.append(targetSchema.hashCode());
+        Object[] given={givenSchema, dataOf(givenDataPreset)};
 
-        logger.trace(messageBuilder.toString());
+        GwtDescription description=new GwtDescription();
+        description.given("DataSchema: {}", givenSchema);
+        description.given("AND data: {}", givenDataPreset);
+        description.when("Data tested for validity with isValidData method");
+        description.then("Result must be {}", expectedResult);
 
-        try{
-            if (samplePreset==targetPreset) {
-                assertTrue(sampleSchema.hashCode()==targetSchema.hashCode(),
-                        LogMsg.FAIL +" Hashcodes of equal presets must be the same!");
+        check(given,
+                (givens)->((DataSchema) givens[0]).isValidData((Map<String, Object>) givens[1]),
+                expectedResult, description);
+    }
 
-                logger.trace(LogMsg.SUCCESS.msg);
-            } else {
-                assertFalse(sampleSchema.hashCode()==targetSchema.hashCode(),
-                        LogMsg.FAIL +" Hashcodes of non-compatible presets must be different!");
+    @Test
+    void hashCodesOfEqualSchemasMustBeTheSame(){
+        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        Boolean expectedResult=Boolean.TRUE;
 
-                logger.trace(LogMsg.SUCCESS.msg);
-            }
+        DataSchema[] given={givenFirstSchema, givenSecondSchema};
 
-        } catch (AssertionError error) {
-            logger.error(error.getMessage());
-            throw new AssertionError(error);
-        }
+        GwtDescription description=new GwtDescription();
+        description.given("First DataSchema: {} ({})", givenFirstSchema, givenFirstSchema.hashCode());
+        description.given("Second DataSchema: {} ({})", givenSecondSchema, givenSecondSchema.hashCode());
+        description.when("Hashcodes of given schemas compared for equality");
+        description.then("Result must be {}", expectedResult);
+
+        check(given, (givens)->(givens[0].hashCode()==givens[1].hashCode()), expectedResult, description);
 
     }
 
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
-            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
-    @Tag("equals")
-     void equalsTest(DataPreset targetPreset) {
-        DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
-        DataSchema schema= schemaOf(samplePreset);
+            names={"STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
+    void hashCodesOfDifferentSchemasMustBeDifferent(DataPreset dataPreset){
+        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        DataSchema givenSecondSchema=schemaOf(dataPreset);
+        Boolean expectedResult=Boolean.FALSE;
 
-        StringBuilder messageBuilder=new StringBuilder("INPUT:");
-        messageBuilder.append(printPreset(samplePreset, "Sample"));
-        messageBuilder.append(printPreset(targetPreset, "Target"));
-        logger.trace(messageBuilder.toString());
+        DataSchema[] given={givenFirstSchema, givenSecondSchema};
 
-        boolean isPresetsEqual=samplePreset.equals(targetPreset);
-        logger.trace(LogMsg.TEST_RESULT.msg," DataSchemas based on presets above considered equal=" + isPresetsEqual);
+        GwtDescription description=new GwtDescription();
+        description.given("First DataSchema: {} ({})", givenFirstSchema, givenFirstSchema.hashCode());
+        description.given("Second DataSchema: {} ({})", givenSecondSchema, givenSecondSchema.hashCode());
+        description.when("Hashcodes of given schemas compared for equality");
+        description.then("Result must be {}", expectedResult);
 
-        try{
-            if (samplePreset==targetPreset) {
-                assertTrue(isPresetsEqual,
-                        LogMsg.FAIL + " Method equals on equal presets must return true!");
-                logger.trace(LogMsg.SUCCESS.msg);
-            } else {
-                assertFalse(isPresetsEqual,
-                        LogMsg.FAIL  + "Method equals of non-compatible presets must return false!");
-                logger.trace(LogMsg.SUCCESS.msg);
-            }
-        } catch (AssertionError error) {
-            logger.error(error.getMessage());
-            throw new AssertionError(error);
-        }
-    }*/
+        check(given, (givens)->(givens[0].hashCode()==givens[1].hashCode()), expectedResult, description);
 
-    // Helper method: creates DataSchema stub of DataPreset
+    }
+
+    @Test
+    void equalsOnEqualSchemasMustReturnTrue(){
+        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        Boolean expectedResult=Boolean.TRUE;
+
+        DataSchema[] given={givenFirstSchema, givenSecondSchema};
+
+        GwtDescription description=new GwtDescription();
+        description.given("First DataSchema: {}", givenFirstSchema);
+        description.given("Second DataSchema: {}", givenSecondSchema);
+        description.when("Given schemas compared for equality with equals method");
+        description.then("Result must be {}", expectedResult);
+
+        check(given, (givens)->(givens[0].equals(givens[1])), expectedResult, description);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value= DataPreset.class,
+            names={"STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
+    void equalsOnNaturallyDifferentSchemasMustReturnFalse(){
+        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
+        Boolean expectedResult=Boolean.FALSE;
+
+        DataSchema[] given={givenFirstSchema, givenSecondSchema};
+
+        GwtDescription description=new GwtDescription();
+        description.given("First DataSchema: {}", givenFirstSchema);
+        description.given("Second DataSchema: {}", givenSecondSchema);
+        description.when("Given schemas compared for equality with equals method");
+        description.then("Result must be {}", expectedResult);
+
+        check(given, (givens)->(givens[0].equals(givens[1])), expectedResult, description);
+    }
+
+    // Helper method: creates DataSchema stub from DataPreset
     private DataSchema schemaOf(DataPreset preset){
         Map<String, Class<?>> schemaDescriptor = new LinkedHashMap<>();
         String[] fields=preset.presetFields;
         Object[] values=preset.presetValues;
 
         for (int i=0; i<fields.length; i++){
-            // There is no Class<T> instance for null values,
-            // so used Class<Integer> by default as far as we used
-            // STR_INT_DEC_BOOL vs STR_NULL_DEC_BOOL presets
-            // for null values check
+            // There is no Class<T> instance for null values, so used Class<Integer> by default
             schemaDescriptor.put(fields[i], values[i]!=null? values[i].getClass(): Integer.class);
         }
 
         return DataSchema.getSchema(schemaDescriptor);
     }
 
-    // Helper method: creates data imitation of DataPreset
+    // Helper method: creates data imitation from DataPreset
     private Map<String, Object> dataOf(DataPreset preset){
         Map<String, Object> data = new LinkedHashMap<>();
         String[] fields=preset.presetFields;

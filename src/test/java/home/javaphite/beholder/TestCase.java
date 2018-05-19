@@ -16,14 +16,14 @@ public abstract class TestCase {
 
     //TODO: add JavaDoc comments for this method
     //TODO: add few overloaded variants for special situations: no when, void method in when
-    protected <I,O> void check(I given, Function<I,O> when, O then, GwtDescription description){
+    protected <T, R> void check(T given, Function<T, R> when, R then, GwtDescription description){
         StringBuilder assertionFailedMessage=new StringBuilder();
 
         testsOverall++;
-        logger.trace("TEST DESCRIPTION: {}{}", System.lineSeparator(), description.toString());
+        logger.trace("TEST DESCRIPTION: {}", description.toString());
 
         try {
-            O result = when.apply(given);
+            R result = when.apply(given);
 
             logger.trace("RESULT: {}", Objects.toString(result));
 
@@ -42,20 +42,6 @@ public abstract class TestCase {
             throw new AssertionError(error);
         }
     }
-
-    /*protected <I> void check(I given, Consumer<I> when, Predicate<I> then, GwtDescription description){
-        try {
-            when.accept(given);
-            Boolean result=then.test(given);
-            logger.trace("Result: " + Objects.toString(result));
-            Assertions.assertTrue(result);
-
-        } catch (AssertionError error){
-
-            throw new AssertionError(error);
-        }
-    }*/
-
 
     public class GwtDescription{
         private List<String> givens=new ArrayList<>();
@@ -97,15 +83,15 @@ public abstract class TestCase {
             String separator=System.lineSeparator();
             String tabulation="\t\t\t\t\t";
 
+            strForm.append(separator);
             strForm.append(tabulation);
             strForm.append(title);
-            strForm.append(separator);
 
             for (String element: list) {
+                strForm.append(separator);
                 strForm.append(tabulation);
                 strForm.append(" - ");
                 strForm.append(element);
-                strForm.append(separator);
             }
             return strForm.toString();
         }

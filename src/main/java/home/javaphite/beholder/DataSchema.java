@@ -49,6 +49,7 @@ public class DataSchema {
      *          3) <i>{@code testedData}</i> consists of the same <u>fields</u> (names and types)
      *              as this {@link DataSchema} (order not taken into account); <br>
      */
+    //TODO: add exceptions and messages about null maps and null values
     public boolean isValidData(Map<String, Object> testedData) {
         if (Objects.isNull(testedData)) return false;
 
