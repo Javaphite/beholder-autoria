@@ -3,7 +3,7 @@ package home.javaphite.beholder;
 import java.util.*;
 
 /**
- * Public class for definition of some structured data format.
+ * Class for definition of some structured data format.
  *
  * @author Javaphite<javaphite@gmail.com>
  *

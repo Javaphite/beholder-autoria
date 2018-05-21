@@ -1,7 +1,10 @@
 package home.javaphite.beholder;
 
+import home.javaphite.testing.BddTestScenario;
 import home.javaphite.testing.LoggedTestCase;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,121 +58,67 @@ class DataSchemaTest extends LoggedTestCase {
         }
     }
 
-    /*@Test
-    void isValidDataMethodMustReturnTrueOnCompatibleData(){
-        DataSchema givenSchema= schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataPreset givenDataPreset = DataPreset.STR_INT_DEC_BOOL;
-        Boolean expectedResult=Boolean.TRUE;
+    @ParameterizedTest
+    @EnumSource(value= DataPreset.class,
+                names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
+    void testingIsValidDataBehavior_OnCompatibleAndDiffKindsOfNonCompatibleData(DataPreset testedPreset){
+        DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
+        DataSchema givenSchema= schemaOf(samplePreset);
+        Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        Object[] given=new Object[2];
-        given[0]=givenSchema;
-        given[1]=dataOf(givenDataPreset);
+        BddTestScenario<Object, Boolean> scenario=new BddTestScenario<>();
+        scenario.given("DataSchema: {@}", givenSchema)
+                .given("AND data: {}", dataOf(testedPreset), testedPreset)
+                .when("Data tested for validity with isValidData method",
+                        g->((DataSchema) g.get(0)).isValidData((Map<String, Object>) g.get(1)) )
+                .then("Result must be {@}", expectedResult);
 
-        GwtDescription description=new GwtDescription();
-        description.given("DataSchema: {}", givenSchema);
-        description.given("AND data: {}", givenDataPreset);
-        description.when("Data tested for validity with isValidData method");
-        description.then("Result must be {}", expectedResult);
+        scenario.perform();
 
-        check(given,
-                (givens)->((DataSchema) givens[0]).isValidData((Map<String, Object>) givens[1]),
-                expectedResult, description);
+        countAsPassed();
     }
 
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
-                names={"STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
-    void isValidDataMethodMustReturnFalseOnAnyIncompatibleData(DataPreset incompatibleData){
-        DataSchema givenSchema= schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataPreset givenDataPreset = incompatibleData;
-        Boolean expectedResult=Boolean.FALSE;
+            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
+    void testingHashCodeBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset){
+        DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
+        DataSchema givenFirstSchema= schemaOf(samplePreset);
+        DataSchema givenSecondSchema= schemaOf(testedPreset);
+        Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        Object[] given={givenSchema, dataOf(givenDataPreset)};
+        BddTestScenario<DataSchema, Boolean> scenario=new BddTestScenario<>();
+        scenario.given("First DataSchema: {@} ({})", givenFirstSchema, givenFirstSchema.hashCode())
+                .given("AND second DataSchema: {@} ({})", givenSecondSchema, givenSecondSchema.hashCode())
+                .when("Hashcodes of given schemas compared for equality",
+                        g->g.get(0).hashCode()==g.get(1).hashCode() )
+                .then("Result must be {@}", expectedResult);
 
-        GwtDescription description=new GwtDescription();
-        description.given("DataSchema: {}", givenSchema);
-        description.given("AND data: {}", givenDataPreset);
-        description.when("Data tested for validity with isValidData method");
-        description.then("Result must be {}", expectedResult);
+        scenario.perform();
 
-        check(given,
-                (givens)->((DataSchema) givens[0]).isValidData((Map<String, Object>) givens[1]),
-                expectedResult, description);
-    }
-
-    @Test
-    void hashCodesOfEqualSchemasMustBeTheSame(){
-        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        Boolean expectedResult=Boolean.TRUE;
-
-        DataSchema[] given={givenFirstSchema, givenSecondSchema};
-
-        GwtDescription description=new GwtDescription();
-        description.given("First DataSchema: {} ({})", givenFirstSchema, givenFirstSchema.hashCode());
-        description.given("Second DataSchema: {} ({})", givenSecondSchema, givenSecondSchema.hashCode());
-        description.when("Hashcodes of given schemas compared for equality");
-        description.then("Result must be {}", expectedResult);
-
-        check(given, (givens)->(givens[0].hashCode()==givens[1].hashCode()), expectedResult, description);
-
+        countAsPassed();
     }
 
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
-            names={"STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
-    void hashCodesOfDifferentSchemasMustBeDifferent(DataPreset dataPreset){
-        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataSchema givenSecondSchema=schemaOf(dataPreset);
-        Boolean expectedResult=Boolean.FALSE;
+            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
+    void testingEqualsBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset){
+        DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
+        DataSchema givenFirstSchema= schemaOf(samplePreset);
+        DataSchema givenSecondSchema= schemaOf(testedPreset);
+        Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        DataSchema[] given={givenFirstSchema, givenSecondSchema};
+        BddTestScenario<DataSchema, Boolean> scenario=new BddTestScenario<>();
+        scenario.given("First DataSchema: {@}", givenFirstSchema)
+                .given("AND second DataSchema: {@}", givenSecondSchema)
+                .when("Given schemas compared for equality with equals method",
+                        g->g.get(0).equals(g.get(1)) )
+                .then("Result must be {@}", expectedResult);
 
-        GwtDescription description=new GwtDescription();
-        description.given("First DataSchema: {} ({})", givenFirstSchema, givenFirstSchema.hashCode());
-        description.given("Second DataSchema: {} ({})", givenSecondSchema, givenSecondSchema.hashCode());
-        description.when("Hashcodes of given schemas compared for equality");
-        description.then("Result must be {}", expectedResult);
+        scenario.perform();
 
-        check(given, (givens)->(givens[0].hashCode()==givens[1].hashCode()), expectedResult, description);
-
+        countAsPassed();
     }
-
-    @Test
-    void equalsOnEqualSchemasMustReturnTrue(){
-        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        Boolean expectedResult=Boolean.TRUE;
-
-        DataSchema[] given={givenFirstSchema, givenSecondSchema};
-
-        GwtDescription description=new GwtDescription();
-        description.given("First DataSchema: {}", givenFirstSchema);
-        description.given("Second DataSchema: {}", givenSecondSchema);
-        description.when("Given schemas compared for equality with equals method");
-        description.then("Result must be {}", expectedResult);
-
-        check(given, (givens)->(givens[0].equals(givens[1])), expectedResult, description);
-    }
-
-    @ParameterizedTest
-    @EnumSource(value= DataPreset.class,
-            names={"STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
-    void equalsOnNaturallyDifferentSchemasMustReturnFalse(){
-        DataSchema givenFirstSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        DataSchema givenSecondSchema=schemaOf(DataPreset.STR_INT_DEC_BOOL);
-        Boolean expectedResult=Boolean.FALSE;
-
-        DataSchema[] given={givenFirstSchema, givenSecondSchema};
-
-        GwtDescription description=new GwtDescription();
-        description.given("First DataSchema: {}", givenFirstSchema);
-        description.given("Second DataSchema: {}", givenSecondSchema);
-        description.when("Given schemas compared for equality with equals method");
-        description.then("Result must be {}", expectedResult);
-
-        check(given, (givens)->(givens[0].equals(givens[1])), expectedResult, description);
-    }*/
 
     // Helper method: creates DataSchema stub from DataPreset
     private DataSchema schemaOf(DataPreset preset){
