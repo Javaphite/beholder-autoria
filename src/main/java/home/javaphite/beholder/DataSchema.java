@@ -12,7 +12,7 @@ import java.util.*;
  * @since 10/05/2018
  */
 
-public class DataSchema {
+class DataSchema {
     private final Map<String, Class<?>> fields;
 
     private DataSchema(Map<String, Class<?>> fields){
@@ -30,10 +30,19 @@ public class DataSchema {
      *            {@link Class} values - types of data fields.
      * @return instance of {@link DataSchema} described by <i>{@code map}</i> parameter.
      */
-    public static DataSchema getSchema(Map<String, Class<?>> map){
+    static DataSchema getSchema(Map<String, Class<?>> map){
             DataSchema newSchema=new DataSchema(Objects.requireNonNull(map));
 
             return newSchema;
+    }
+
+    //TODO: add JavaDoc comments or delete all other JavaDocs since access level now package-private
+    Map<String, Object> createDataBlank(){
+        Map<String, Object> dataBlank=new LinkedHashMap<>();
+        Iterator<String> fieldIterator = fields.keySet().iterator();
+        fieldIterator.forEachRemaining(fieldName->dataBlank.put(fieldName, null));
+
+        return dataBlank;
     }
 
     /**
@@ -50,7 +59,7 @@ public class DataSchema {
      *              as this {@link DataSchema} (order not taken into account); <br>
      */
     //TODO: add exceptions and messages about null maps and null values
-    public boolean isValidData(Map<String, Object> testedData) {
+    boolean isValidData(Map<String, Object> testedData) {
         if (Objects.isNull(testedData)) return false;
 
         if (testedData.size() != fields.size()) return false;
@@ -63,7 +72,6 @@ public class DataSchema {
         return true;
     }
 
-    //TODO: redo with hashcode autogeneration tools
     @Override
     public int hashCode(){
         int hashcode=0;
@@ -75,7 +83,6 @@ public class DataSchema {
         return hashcode;
     }
 
-    //TODO: redo with equals autogeneration tools
     @Override
     public boolean equals(Object dataSchema){
         if (dataSchema==null || !(dataSchema instanceof DataSchema)) return false;

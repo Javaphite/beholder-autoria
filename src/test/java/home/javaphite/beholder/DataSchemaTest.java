@@ -1,13 +1,15 @@
 package home.javaphite.beholder;
 
-import home.javaphite.testing.BddTestScenario;
 import home.javaphite.testing.LoggedTestCase;
+import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Tag("home.javaphite.beholder.DataSchema")
 class DataSchemaTest extends LoggedTestCase {
@@ -58,26 +60,45 @@ class DataSchemaTest extends LoggedTestCase {
         }
     }
 
+    @Tag("createDataBlank")
+    @Test
+    void createDataBlankMustReturnNullFilledMapWithSchemaDefinedFields(){
+        DataSchema schema=schemaOf(DataPreset.STR_INT_DEC);
+        Map<String, Object> expectedReturn=new TreeMap<>();
+
+        expectedReturn.put("name", null);
+        expectedReturn.put("age", null);
+        expectedReturn.put("height", null);
+
+        TestScenario<DataSchema, Map<String, Object>> scenario = new TestScenario<>();
+        scenario.given("<DataSchema> {@}", schema)
+                .when("<DataSchema's> createDataBlank method invoked", g->g.get(0).createDataBlank())
+                .then("Returned map must be equal to {@}", expectedReturn)
+                .perform();
+    }
+
+    @Tag("isValidData")
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
                 names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
     void testingIsValidDataBehavior_OnCompatibleAndDiffKindsOfNonCompatibleData(DataPreset testedPreset){
         DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
         DataSchema givenSchema= schemaOf(samplePreset);
+        Map<String, Object> givenData=dataOf(testedPreset);
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        BddTestScenario<Object, Boolean> scenario=new BddTestScenario<>();
+        TestScenario<Object, Boolean> scenario=new TestScenario<>();
         scenario.given("DataSchema: {@}", givenSchema)
-                .given("AND data: {}", dataOf(testedPreset), testedPreset)
+                .given("AND data: {}", givenData, testedPreset)
                 .when("Data tested for validity with isValidData method",
                         g->((DataSchema) g.get(0)).isValidData((Map<String, Object>) g.get(1)) )
-                .then("Result must be {@}", expectedResult);
-
-        scenario.perform();
+                .then("Result must be {@}", expectedResult)
+                .perform();
 
         countAsPassed();
     }
 
+    @Tag("hashCode")
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
             names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
@@ -87,18 +108,18 @@ class DataSchemaTest extends LoggedTestCase {
         DataSchema givenSecondSchema= schemaOf(testedPreset);
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        BddTestScenario<DataSchema, Boolean> scenario=new BddTestScenario<>();
+        TestScenario<DataSchema, Boolean> scenario=new TestScenario<>();
         scenario.given("First DataSchema: {@} ({})", givenFirstSchema, givenFirstSchema.hashCode())
                 .given("AND second DataSchema: {@} ({})", givenSecondSchema, givenSecondSchema.hashCode())
                 .when("Hashcodes of given schemas compared for equality",
                         g->g.get(0).hashCode()==g.get(1).hashCode() )
-                .then("Result must be {@}", expectedResult);
-
-        scenario.perform();
+                .then("Result must be {@}", expectedResult)
+                .perform();
 
         countAsPassed();
     }
 
+    @Tag("equals")
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
             names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
@@ -108,19 +129,18 @@ class DataSchemaTest extends LoggedTestCase {
         DataSchema givenSecondSchema= schemaOf(testedPreset);
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        BddTestScenario<DataSchema, Boolean> scenario=new BddTestScenario<>();
+        TestScenario<DataSchema, Boolean> scenario=new TestScenario<>();
         scenario.given("First DataSchema: {@}", givenFirstSchema)
                 .given("AND second DataSchema: {@}", givenSecondSchema)
                 .when("Given schemas compared for equality with equals method",
                         g->g.get(0).equals(g.get(1)) )
-                .then("Result must be {@}", expectedResult);
-
-        scenario.perform();
+                .then("Result must be {@}", expectedResult)
+                .perform();
 
         countAsPassed();
     }
 
-    // Helper method: creates DataSchema stub from DataPreset
+    // Helper method: creates DataSchema from DataPreset
     private DataSchema schemaOf(DataPreset preset){
         Map<String, Class<?>> schemaDescriptor = new LinkedHashMap<>();
         String[] fields=preset.presetFields;

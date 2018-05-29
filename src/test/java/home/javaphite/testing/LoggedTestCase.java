@@ -22,9 +22,9 @@ public abstract class LoggedTestCase {
     static void initAll(TestInfo testInfo) {
         setLogger(LoggerFactory.getLogger("testLogger"));
 
-        messages.put("initAll", "Testing {}...");
-        messages.put("startTest", "Starting test {}...");
-        messages.put("result", "Result of {} tests: {}/{} passed - {}.");
+        messages.put("initAll", "Testing {}");
+        messages.put("startTest", "Starting test {}");
+        messages.put("result", "Result of {} tests: {}/{} passed - {}");
 
         // Add tested class name to logging context
         MDC.put("className", testInfo.getTestClass().toString().replaceAll("s?(Test)?\\[?]?(Optional)?(class)?", ""));
@@ -34,7 +34,6 @@ public abstract class LoggedTestCase {
 
     @BeforeEach
     void initEach(TestInfo testInfo) {
-        //TODO: there must be better way to get test method clear name!
         logger.info(messages.get("startTest"),
                 testInfo.getTestMethod().toString().replaceAll(".+(?=(\\.[^.(]+\\())", "").replaceAll("\\.?]?(\\(.*\\))?", ""));
     }
