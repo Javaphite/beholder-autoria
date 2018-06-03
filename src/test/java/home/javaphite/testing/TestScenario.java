@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 //TODO: add javaDocs to this class' API
 public final class TestScenario<T,R>{
@@ -17,10 +17,10 @@ public final class TestScenario<T,R>{
     private List<String> whenDescriptions=new ArrayList<>();
     private List<String> thenDescriptions=new ArrayList<>();
     private List<T> given = new ArrayList<>();
-    private MultiFunction<T, R> when;
+    private Function<List<T>, R> when;
     private R then;
 
-    public TestScenario(){
+    public TestScenario() {
         this.logger= LoggerFactory.getLogger(TestScenario.class);
     }
 
@@ -31,7 +31,7 @@ public final class TestScenario<T,R>{
         return this;
     }
 
-    public TestScenario<T,R> when(String description, MultiFunction<T, R> when, Object...additionalValues)
+    public TestScenario<T,R> when(String description, Function<List<T>, R> when, Object...additionalValues)
             throws IllegalArgumentException {
         whenDescriptions.add(fillPlaceholders(description, when, additionalValues));
         this.when=when;
@@ -49,10 +49,8 @@ public final class TestScenario<T,R>{
         check(given, when, then);
     }
 
-    private void check(List<T> given,  MultiFunction<T, R> when, R then){
-        T[] arrayOfGivens = Array.newInstance(arrayOfGivens,0);
-
-        R result = when.apply(arrayOfGivens);
+    private void check(List<T> given, Function<List<T>, R> when, R then){
+        R result = when.apply(given);
 
         logger.trace("TEST DESCRIPTION: {}", this.toString());
 
