@@ -63,18 +63,20 @@ class DataSchemaTest extends LoggedTestCase {
     @Tag("createDataBlank")
     @Test
     void createDataBlankMustReturnNullFilledMapWithSchemaDefinedFields(){
-        DataSchema schema=schemaOf(DataPreset.STR_INT_DEC);
-        Map<String, Object> expectedReturn=new TreeMap<>();
+        DataSchema givenSchema=schemaOf(DataPreset.STR_INT_DEC);
 
+        Map<String, Object> expectedReturn=new TreeMap<>();
         expectedReturn.put("name", null);
         expectedReturn.put("age", null);
         expectedReturn.put("height", null);
 
         TestScenario<DataSchema, Map<String, Object>> scenario = new TestScenario<>();
-        scenario.given("<DataSchema> {@}", schema)
-                .when("<DataSchema's> createDataBlank method invoked", g->g.get(0).createDataBlank())
+        scenario.given("<DataSchema> {@}", givenSchema)
+                .when("<DataSchema's> createDataBlank method invoked", g->g[0].createDataBlank())
                 .then("Returned map must be equal to {@}", expectedReturn)
                 .perform();
+
+        countAsPassed();
     }
 
     @Tag("isValidData")
@@ -82,16 +84,16 @@ class DataSchemaTest extends LoggedTestCase {
     @EnumSource(value= DataPreset.class,
                 names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
     void testingIsValidDataBehavior_OnCompatibleAndDiffKindsOfNonCompatibleData(DataPreset testedPreset){
-        DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
-        DataSchema givenSchema= schemaOf(samplePreset);
-        Map<String, Object> givenData=dataOf(testedPreset);
-        Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
+        DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
+        DataSchema givenSchema = schemaOf(samplePreset);
+        Map<String, Object> givenData = dataOf(testedPreset);
+        Boolean expectedResult = (testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
         TestScenario<Object, Boolean> scenario=new TestScenario<>();
         scenario.given("DataSchema: {@}", givenSchema)
                 .given("AND data: {}", givenData, testedPreset)
                 .when("Data tested for validity with isValidData method",
-                        g->((DataSchema) g.get(0)).isValidData((Map<String, Object>) g.get(1)) )
+                        g->((DataSchema) g[0]).isValidData((Map<String, Object>) g[1]) )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -112,7 +114,7 @@ class DataSchemaTest extends LoggedTestCase {
         scenario.given("First DataSchema: {@} ({})", givenFirstSchema, givenFirstSchema.hashCode())
                 .given("AND second DataSchema: {@} ({})", givenSecondSchema, givenSecondSchema.hashCode())
                 .when("Hashcodes of given schemas compared for equality",
-                        g->g.get(0).hashCode()==g.get(1).hashCode() )
+                        g->g[0].hashCode()==g[1].hashCode() )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -133,7 +135,7 @@ class DataSchemaTest extends LoggedTestCase {
         scenario.given("First DataSchema: {@}", givenFirstSchema)
                 .given("AND second DataSchema: {@}", givenSecondSchema)
                 .when("Given schemas compared for equality with equals method",
-                        g->g.get(0).equals(g.get(1)) )
+                        g->g[0].equals(g[1]) )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 

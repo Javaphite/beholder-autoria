@@ -14,12 +14,15 @@ import java.util.Map;
 
 public abstract class LoggedTestCase {
     protected static Logger logger;
-    private static int testsOverall = 0;
-    private static int testsPassed = 0;
+    private static int testsOverall;
+    private static int testsPassed;
     private static final Map<String, String> messages = new HashMap<>();
 
     @BeforeAll
     static void initAll(TestInfo testInfo) {
+        testsOverall=0;
+        testsPassed=0;
+
         setLogger(LoggerFactory.getLogger("testLogger"));
 
         messages.put("initAll", "Testing {}");
