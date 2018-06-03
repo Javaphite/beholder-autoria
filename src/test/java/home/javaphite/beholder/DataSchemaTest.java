@@ -72,7 +72,7 @@ class DataSchemaTest extends LoggedTestCase {
 
         TestScenario<DataSchema, Map<String, Object>> scenario = new TestScenario<>();
         scenario.given("<DataSchema> {@}", givenSchema)
-                .when("<DataSchema's> createDataBlank method invoked", g->g[0].createDataBlank())
+                .when("<DataSchema's> createDataBlank method invoked", g->g.get(0).createDataBlank())
                 .then("Returned map must be equal to {@}", expectedReturn)
                 .perform();
 
@@ -93,7 +93,7 @@ class DataSchemaTest extends LoggedTestCase {
         scenario.given("DataSchema: {@}", givenSchema)
                 .given("AND data: {}", givenData, testedPreset)
                 .when("Data tested for validity with isValidData method",
-                        g->((DataSchema) g[0]).isValidData((Map<String, Object>) g[1]) )
+                        g->((DataSchema) g.get(0)).isValidData((Map<String, Object>) g.get(1)) )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -114,7 +114,7 @@ class DataSchemaTest extends LoggedTestCase {
         scenario.given("First DataSchema: {@} ({})", givenFirstSchema, givenFirstSchema.hashCode())
                 .given("AND second DataSchema: {@} ({})", givenSecondSchema, givenSecondSchema.hashCode())
                 .when("Hashcodes of given schemas compared for equality",
-                        g->g[0].hashCode()==g[1].hashCode() )
+                        g->g.get(0).hashCode()==g.get(1).hashCode() )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -135,7 +135,7 @@ class DataSchemaTest extends LoggedTestCase {
         scenario.given("First DataSchema: {@}", givenFirstSchema)
                 .given("AND second DataSchema: {@}", givenSecondSchema)
                 .when("Given schemas compared for equality with equals method",
-                        g->g[0].equals(g[1]) )
+                        g->g.get(0).equals(g.get(1)) )
                 .then("Result must be {@}", expectedResult)
                 .perform();
 

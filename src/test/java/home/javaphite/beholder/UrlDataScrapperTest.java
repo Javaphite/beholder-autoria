@@ -41,7 +41,7 @@ class UrlDataScrapperTest extends LoggedTestCase{
                         "HTML tag remover","simple punctuation remover", "lowercase converter")
                 .given("AND HTML page <text>: {@}", textWithHtmlTags)
                 .when("<UrlDataScrapper's> filters applied to <text>",
-                        g->((UrlDataScrapper) g[0]).applyFilters( (String) g[1]) )
+                        g->((UrlDataScrapper) g.get(0)).applyFilters( (String) g.get(1)) )
                 .then("Resulting string should be: {@}", expectedResultingText)
                 .perform();
 
@@ -57,8 +57,8 @@ class UrlDataScrapperTest extends LoggedTestCase{
         TestScenario<UrlDataScrapper, Map<String, Object>> scenario = new TestScenario<>();
         scenario.given("<UrlDataScrapper>: associated with <AccessorService>", givenScrapper)
                 .when("<UrlDataScrapper's> extractAndSend method called AND we peek last element in <DataAccessor's> queue",
-                        g->{ g[0].extractAndSend();
-                            return g[0].accessorService.queuedData.peek();})
+                        g->{ g.get(0).extractAndSend();
+                            return accessorService.queuedData.peek();})
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
 
@@ -97,8 +97,13 @@ class UrlDataScrapperTest extends LoggedTestCase{
     private LoaderService<String> getFakeLoaderService() {
         LoaderService<String> fakeLoaderService = new LoaderService<String>() {
             @Override
-            String getContent(String sourceAddress) {
+            public String getContent(String sourceAddress) {
                 return "Line;Red;100";
+            }
+
+            @Override
+            public Loader<String> resolveLoaderFor(String source) {
+                return null;
             }
         };
         return fakeLoaderService;
