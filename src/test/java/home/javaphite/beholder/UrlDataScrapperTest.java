@@ -57,7 +57,7 @@ class UrlDataScrapperTest extends LoggedTestCase{
         TestScenario<UrlDataScrapper, Map<String, Object>> scenario = new TestScenario<>();
         scenario.given("<UrlDataScrapper>: associated with <AccessorService>", givenScrapper)
                 .when("<UrlDataScrapper's> extractAndSend method called AND we peek last element in <DataAccessor's> queue",
-                        g->{ g.get(0).extractAndSend();
+                        g->{g.get(0).extractAndSend();
                             return accessorService.queuedData.peek();})
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
@@ -99,11 +99,6 @@ class UrlDataScrapperTest extends LoggedTestCase{
             @Override
             public String getContent(String sourceAddress) {
                 return "Line;Red;100";
-            }
-
-            @Override
-            public Loader<String> resolveLoaderFor(String source) {
-                return null;
             }
         };
         return fakeLoaderService;
