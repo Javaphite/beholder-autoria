@@ -1,5 +1,6 @@
 package home.javaphite.beholder;
 
+import home.javaphite.testing.BinaryFunction;
 import home.javaphite.testing.LoggedTestCase;
 import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
@@ -20,29 +21,30 @@ class UrlDataScrapperTest extends LoggedTestCase{
     void applyFilters_MustReturnStringTransformedWithAllFilters(){
         String textWithHtmlTags="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
                                 "</head><body>Content of the document......</body></html>";
-        String expectedResultingText="titleofthedocumentcontentofthedocument";
 
-        List<UnaryOperator<String>> filters=new ArrayList<>();
+        List<UnaryOperator<String>> filters = new ArrayList<>();
         String htmlTagsPattern="<\\\\?[^<]+>";
         String punctuationCharsPattern="[. !?,]";
         filters.add(input->input.replaceAll(htmlTagsPattern,""));
         filters.add(input->input.replaceAll(punctuationCharsPattern,""));
         filters.add(String::toLowerCase);
 
-        UrlDataScrapper scrapperStub=new UrlDataScrapper(null, null, filters) {
+        UrlDataScrapper givenScrapper = new UrlDataScrapper(null, null, filters) {
             @Override
            public Set<Map<String, Object>> extract(String dataInDelimitedString) {
                 return null;
             }
         };
 
-        TestScenario<Object, String> scenario=new TestScenario<>();
-        scenario.given("<UrlDataScrapper> with filters: {}, {}, {}.", scrapperStub,
-                        "HTML tag remover","simple punctuation remover", "lowercase converter")
-                .given("AND HTML page <text>: {@}", textWithHtmlTags)
-                .when("<UrlDataScrapper's> filters applied to <text>",
-                        g->((UrlDataScrapper) g.get(0)).applyFilters( (String) g.get(1)) )
-                .then("Resulting string should be: {@}", expectedResultingText)
+        BinaryFunction<UrlDataScrapper, String, String> action = UrlDataScrapper::applyFilters;
+        String expectedResultingText="titleofthedocumentcontentofthedocument";
+
+        TestScenario scenario = new TestScenario();
+        scenario.given("UrlDataScrapper with filters: {}, {}, {}.", givenScrapper,
+                        "HTML tags remover","punctuation remover", " to lowercase")
+                .given("AND HTML page text: {@}", textWithHtmlTags)
+                .when("UrlDataScrapper's filters applied to text", action)
+                .then("Resulting string must be: {@}", expectedResultingText)
                 .perform();
 
         countAsPassed();
@@ -50,15 +52,20 @@ class UrlDataScrapperTest extends LoggedTestCase{
 
     @Test
     void extractAndSend_BehaviorTest() {
-        Map<String, Object> expectedResult = getDataStub();
         UrlDataScrapper givenScrapper = getCustomScrapper();
-        AccessorService<Map<String, Object>> accessorService = givenScrapper.accessorService;
+        AccessorService<Map<String, Object>> givenAccessorService = givenScrapper.accessorService;
 
-        TestScenario<UrlDataScrapper, Map<String, Object>> scenario = new TestScenario<>();
-        scenario.given("<UrlDataScrapper>: associated with <AccessorService>", givenScrapper)
-                .when("<UrlDataScrapper's> extractAndSend method called AND we peek last element in <DataAccessor's> queue",
-                        g->{ g.get(0).extractAndSend();
-                            return accessorService.queuedData.peek();})
+        BinaryFunction< UrlDataScrapper, AccessorService<Map<String, Object>>, Map<String, Object> > action =
+                (scrapper, accessor) -> {scrapper.extractAndSend();
+                                         return accessor.queuedData.peek();
+                                        };
+
+        Map<String, Object> expectedResult = getDataStub();
+
+        TestScenario scenario = new TestScenario();
+        scenario.given("UrlDataScrapper: associated with some AccessorService", givenScrapper)
+                .given("AND some AccessorService used by scrapper", givenAccessorService)
+                .when("UrlDataScrapper's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
 
