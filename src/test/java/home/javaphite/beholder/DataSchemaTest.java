@@ -1,6 +1,8 @@
 package home.javaphite.beholder;
 
+import home.javaphite.testing.BinaryFunction;
 import home.javaphite.testing.LoggedTestCase;
+import home.javaphite.testing.MonoFunction;
 import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,15 +66,15 @@ class DataSchemaTest extends LoggedTestCase {
     @Test
     void createDataBlankMustReturnNullFilledMapWithSchemaDefinedFields(){
         DataSchema givenSchema=schemaOf(DataPreset.STR_INT_DEC);
-
+        MonoFunction<DataSchema, Map<String, Object>> action = DataSchema::createDataBlank;
         Map<String, Object> expectedReturn=new TreeMap<>();
         expectedReturn.put("name", null);
         expectedReturn.put("age", null);
         expectedReturn.put("height", null);
 
-        TestScenario<DataSchema, Map<String, Object>> scenario = new TestScenario<>();
+        TestScenario scenario = new TestScenario();
         scenario.given("<DataSchema> {@}", givenSchema)
-                .when("<DataSchema's> createDataBlank method invoked", g->g.get(0).createDataBlank())
+                .when("<DataSchema's> createDataBlank method invoked", action)
                 .then("Returned map must be equal to {@}", expectedReturn)
                 .perform();
 
@@ -87,13 +89,13 @@ class DataSchemaTest extends LoggedTestCase {
         DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
         DataSchema givenSchema = schemaOf(samplePreset);
         Map<String, Object> givenData = dataOf(testedPreset);
+        BinaryFunction<DataSchema, Map<String, Object>, Boolean> action = DataSchema::isValidData;
         Boolean expectedResult = (testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        TestScenario<Object, Boolean> scenario=new TestScenario<>();
+        TestScenario scenario=new TestScenario();
         scenario.given("DataSchema: {@}", givenSchema)
                 .given("AND data: {}", givenData, testedPreset)
-                .when("Data tested for validity with isValidData method",
-                        g->((DataSchema) g.get(0)).isValidData((Map<String, Object>) g.get(1)) )
+                .when("Data tested for validity with isValidData method", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -106,15 +108,15 @@ class DataSchemaTest extends LoggedTestCase {
             names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
     void testingHashCodeBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset){
         DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
-        DataSchema givenFirstSchema= schemaOf(samplePreset);
-        DataSchema givenSecondSchema= schemaOf(testedPreset);
+        DataSchema firstSchema= schemaOf(samplePreset);
+        DataSchema secondSchema= schemaOf(testedPreset);
+        BinaryFunction<DataSchema, DataSchema, Boolean> action = (ds1, ds2) -> ds1.hashCode()==ds2.hashCode();
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        TestScenario<DataSchema, Boolean> scenario=new TestScenario<>();
-        scenario.given("First DataSchema: {@} ({})", givenFirstSchema, givenFirstSchema.hashCode())
-                .given("AND second DataSchema: {@} ({})", givenSecondSchema, givenSecondSchema.hashCode())
-                .when("Hashcodes of given schemas compared for equality",
-                        g->g.get(0).hashCode()==g.get(1).hashCode() )
+        TestScenario scenario=new TestScenario();
+        scenario.given("First DataSchema: {@} ({})", firstSchema, firstSchema.hashCode())
+                .given("AND second DataSchema: {@} ({})", secondSchema, secondSchema.hashCode())
+                .when("Hashcodes of given schemas compared for equality", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
@@ -129,13 +131,13 @@ class DataSchemaTest extends LoggedTestCase {
         DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
         DataSchema givenFirstSchema= schemaOf(samplePreset);
         DataSchema givenSecondSchema= schemaOf(testedPreset);
+        BinaryFunction<DataSchema, DataSchema, Boolean> action = DataSchema::equals;
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        TestScenario<DataSchema, Boolean> scenario=new TestScenario<>();
+        TestScenario scenario=new TestScenario();
         scenario.given("First DataSchema: {@}", givenFirstSchema)
                 .given("AND second DataSchema: {@}", givenSecondSchema)
-                .when("Given schemas compared for equality with equals method",
-                        g->g.get(0).equals(g.get(1)) )
+                .when("Given schemas compared for equality with equals method", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
 

@@ -7,56 +7,62 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 //TODO: add javaDocs to this class' API
-public final class TestScenario<T,R>{
+public final class TestScenario {
     private Logger logger;
 
-    private List<String> givenDescriptions=new ArrayList<>();
-    private List<String> whenDescriptions=new ArrayList<>();
-    private List<String> thenDescriptions=new ArrayList<>();
-    private List<T> given = new ArrayList<>();
-    private Function<List<T>, R> when;
-    private R then;
+    private List<String> givenDescriptions = new ArrayList<>();
+    private List<String> whenDescriptions = new ArrayList<>();
+    private List<String> thenDescriptions = new ArrayList<>();
+    private List<Object> given = new ArrayList<>();
+    private MetaFunction<?> when;
+    private Object then;
 
     public TestScenario() {
         this.logger= LoggerFactory.getLogger(TestScenario.class);
     }
 
-    public TestScenario<T,R> given(String description, T givenValue, Object...additionalValues)
+    public <T> TestScenario given(String description, T givenValue, Object...additionalValues)
             throws IllegalArgumentException {
         givenDescriptions.add(fillPlaceholders(description, givenValue, additionalValues));
         given.add(givenValue);
         return this;
     }
 
-    public TestScenario<T,R> when(String description, Function<List<T>, R> when, Object...additionalValues)
+    public <R> TestScenario when(String description, MetaFunction<R> when, Object...additionalValues)
             throws IllegalArgumentException {
         whenDescriptions.add(fillPlaceholders(description, when, additionalValues));
         this.when=when;
         return this;
     }
 
-    public TestScenario<T,R> then(String description, R thenValue, Object...additionalValues)
+    public <R> TestScenario then(String description, R thenValue, Object...additionalValues)
             throws IllegalArgumentException {
         thenDescriptions.add(fillPlaceholders(description, thenValue, additionalValues));
         then=thenValue;
         return this;
     }
 
-    public void perform() throws AssertionError{
-        check(given, when, then);
+    public void perform() throws AssertionError {
+        Object result = null;
+        switch (given.size()) {
+            case 1: result = when.apply(given.get(0)); break;
+            case 2: result = when.apply(given.get(0), given.get(1)); break;
+            case 3: result = when.apply(given.get(0), given.get(1), given.get(2)); break;
+            default:
+                throw new IndexOutOfBoundsException("Only 1-3 given arguments supported, but was " + given.size());
+        }
+
+        check(result);
     }
 
-    private void check(List<T> given, Function<List<T>, R> when, R then){
-        R result = when.apply(given);
-
+    private void check(Object actualResult){
         logger.trace("TEST DESCRIPTION: {}", this.toString());
 
         try {
-            logger.trace("RESULT: {}", Objects.toString(result));
-            Assertions.assertEquals(then, result, "Test failed!");
+            logger.trace("RESULT: {}", Objects.toString(actualResult));
+            Assertions.assertEquals(then, actualResult, "Test failed!");
             logger.trace("Test passed.");
         }
         catch (AssertionError error) {
