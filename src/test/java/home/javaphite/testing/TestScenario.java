@@ -80,7 +80,7 @@ public final class TestScenario {
             result = Objects.requireNonNull(stringWithPlaceholders, "String with placeholders couldn't be null.");
 
             Object nonNullMainFiller = Objects.requireNonNull(mainFiller, "Null fillers not allowed, but main filler is null!");
-            result = stringWithPlaceholders.replaceAll(mainPlaceholderPattern, nonNullMainFiller.toString());
+            result = result.replaceAll(mainPlaceholderPattern, nonNullMainFiller.toString());
 
             for (int i = 0; i < secondaryFillers.length; i++) {
                 Object nonNullFiller = Objects.requireNonNull(secondaryFillers[i], "Null fillers not allowed, but element " + i + " is null!");

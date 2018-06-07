@@ -107,11 +107,6 @@ class UrlDataScrapperTest extends LoggedTestCase{
             public String getContent(String sourceAddress) {
                 return "Line;Red;100";
             }
-
-            @Override
-            public Loader<String> resolveLoaderFor(String source) {
-                return null;
-            }
         };
         return fakeLoaderService;
     }

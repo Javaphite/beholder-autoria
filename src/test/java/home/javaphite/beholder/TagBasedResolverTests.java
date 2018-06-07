@@ -1,47 +1,33 @@
 package home.javaphite.beholder;
 
 import home.javaphite.testing.LoggedTestCase;
+import home.javaphite.testing.TernaryFunction;
 import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TagBasedResolverTests extends LoggedTestCase {
-    @Test
+class TagBasedResolverTests extends LoggedTestCase {
+    @ParameterizedTest
+    @ValueSource(strings={"custom", "unknown"})
     @Tag("getLoader")
-    void getLoader_MustReturnLoaderAssociatedWithExistentTag() {
-        String testedTag = "custom";
-        String expectedResult = "I am " + testedTag + " Loader";
+    void getLoader_BehaviorTest(String testedTag) {
         LoaderResolver<String> givenResolver = new TagBasedResolver<>();
         Map<String, Loader<String>> givenLoaders = getFakeLoaders();
+        TernaryFunction<LoaderResolver<String>,  Map<String, Loader<String>>, String, String> action =
+                (resolver, loaders, tag) -> resolver.getLoader(loaders, tag).load();
 
-        TestScenario<Object, String> scenario = new TestScenario<>();
-        scenario.given("<LoaderResolver>: {@}", givenResolver)
-                .given("AND bunch of <Loaders>: {@}", givenLoaders)
-                .when("getLoader method of <LoaderResolver> invoked with argument '{}' AND <Loader's> load method invoked",
-                        g ->((LoaderResolver<String>) g.get(0)).getLoader(givenLoaders, testedTag).load(), testedTag )
-                .then("Return must be {}", expectedResult)
-                .perform();
+        String expectedResult = testedTag.equals("custom") ? "I am custom Loader" : "I am default Loader";
 
-        countAsPassed();
-    }
-
-    @Test
-    @Tag("getLoader")
-    void getLoader_MustReturnDefaultLoaderIfCantFindTag() {
-        String testedTag = "unknown_tag";
-        String expectedResult = "I am default Loader";
-        LoaderResolver<String> givenResolver = new TagBasedResolver<>();
-        Map<String, Loader<String>> givenLoaders = getFakeLoaders();
-
-        TestScenario<Object, String> scenario = new TestScenario<>();
-        scenario.given("<LoaderResolver>: {@}", givenResolver)
-                .given("AND bunch of <Loaders>: {@}", givenLoaders)
-                .when("getLoader method of <LoaderResolver> invoked with argument '{}' AND <Loader's> load method invoked",
-                        g ->((LoaderResolver<String>) g.get(0)).getLoader(givenLoaders, testedTag).load(), testedTag )
-                .then("Return must be {}", expectedResult)
+        TestScenario scenario = new TestScenario();
+        scenario.given("LoaderResolver: {@}", givenResolver)
+                .given("AND group of Loaders: ", givenLoaders)
+                .given("AND tag: {@}", testedTag)
+                .when("getLoader method of resolver invoked with tag AND loader's load method invoked", action, testedTag )
+                .then("Return must be {@}", expectedResult)
                 .perform();
 
         countAsPassed();
