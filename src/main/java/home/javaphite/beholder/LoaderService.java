@@ -6,8 +6,10 @@ class LoaderService<T> {
     private LoaderResolver<T> resolver;
     private Map<String, Loader<T>> loaders;
 
-    T getContent(String sourceAddress) {
-        Loader<? extends T> loader = resolver.getLoader(loaders, sourceAddress);
+    //Requires way to inject loaders
+
+    T getContent(String link) {
+        Loader<? extends T> loader = resolver.getLoader(loaders, link);
         return loader.load();
     }
 

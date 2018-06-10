@@ -15,7 +15,7 @@ public final class TestScenario {
     private List<String> givenDescriptions = new ArrayList<>();
     private List<String> whenDescriptions = new ArrayList<>();
     private List<String> thenDescriptions = new ArrayList<>();
-    private List<Object> given = new ArrayList<>();
+    private List<Object> givens = new ArrayList<>();
     private MetaFunction<?> when;
     private Object then;
 
@@ -23,46 +23,47 @@ public final class TestScenario {
         this.logger= LoggerFactory.getLogger(TestScenario.class);
     }
 
-    public <T> TestScenario given(String description, T givenValue, Object...additionalValues)
+    public <T> TestScenario given(String description, T given, Object...infoValues)
             throws IllegalArgumentException {
-        givenDescriptions.add(fillPlaceholders(description, givenValue, additionalValues));
-        given.add(givenValue);
+        givenDescriptions.add(fillPlaceholders(description, given, infoValues));
+        this.givens.add(given);
         return this;
     }
 
-    public <R> TestScenario when(String description, MetaFunction<R> when, Object...additionalValues)
+    public <R> TestScenario when(String description, MetaFunction<R> action, Object...infoValues)
             throws IllegalArgumentException {
-        whenDescriptions.add(fillPlaceholders(description, when, additionalValues));
-        this.when=when;
+        whenDescriptions.add(fillPlaceholders(description, action, infoValues));
+        this.when=action;
         return this;
     }
 
-    public <R> TestScenario then(String description, R thenValue, Object...additionalValues)
+    public <R> TestScenario then(String description, R expectedResult, Object...infoValues)
             throws IllegalArgumentException {
-        thenDescriptions.add(fillPlaceholders(description, thenValue, additionalValues));
-        then=thenValue;
+        thenDescriptions.add(fillPlaceholders(description, expectedResult, infoValues));
+        this.then = expectedResult;
         return this;
     }
 
     public void perform() throws AssertionError {
         Object result = null;
-        switch (given.size()) {
-            case 1: result = when.apply(given.get(0)); break;
-            case 2: result = when.apply(given.get(0), given.get(1)); break;
-            case 3: result = when.apply(given.get(0), given.get(1), given.get(2)); break;
+
+        switch (givens.size()) {
+            case 1: result = when.apply(givens.get(0)); break;
+            case 2: result = when.apply(givens.get(0), givens.get(1)); break;
+            case 3: result = when.apply(givens.get(0), givens.get(1), givens.get(2)); break;
             default:
-                throw new IndexOutOfBoundsException("Only 1-3 given arguments supported, but was " + given.size());
+                throw new IndexOutOfBoundsException("Only 1-3 givens supported, but was " + givens.size());
         }
 
         check(result);
     }
 
-    private void check(Object actualResult){
+    private void check(Object result){
         logger.trace("TEST DESCRIPTION: {}", this.toString());
 
         try {
-            logger.trace("RESULT: {}", Objects.toString(actualResult));
-            Assertions.assertEquals(then, actualResult, "Test failed!");
+            logger.trace("RESULT: {}", Objects.toString(result));
+            Assertions.assertEquals(then, result, "Test failed!");
             logger.trace("Test passed.");
         }
         catch (AssertionError error) {

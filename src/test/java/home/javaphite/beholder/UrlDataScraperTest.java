@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-@Tag("home.javaphite.beholder.UrlDataScrapper")
-class UrlDataScrapperTest extends LoggedTestCase{
+@Tag("home.javaphite.beholder.UrlDataScraper")
+class UrlDataScraperTest extends LoggedTestCase{
     @Test
     void applyFilters_MustReturnStringTransformedWithAllFilters(){
         String textWithHtmlTags="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
@@ -29,21 +29,21 @@ class UrlDataScrapperTest extends LoggedTestCase{
         filters.add(input->input.replaceAll(punctuationCharsPattern,""));
         filters.add(String::toLowerCase);
 
-        UrlDataScrapper givenScrapper = new UrlDataScrapper(null, null, filters) {
+        UrlDataScraper givenScraper = new UrlDataScraper(null, null, filters) {
             @Override
            public Set<Map<String, Object>> extract(String dataInDelimitedString) {
                 return null;
             }
         };
 
-        BinaryFunction<UrlDataScrapper, String, String> action = UrlDataScrapper::applyFilters;
+        BinaryFunction<UrlDataScraper, String, String> action = UrlDataScraper::applyFilters;
         String expectedResultingText="titleofthedocumentcontentofthedocument";
 
         TestScenario scenario = new TestScenario();
-        scenario.given("UrlDataScrapper with filters: {}, {}, {}.", givenScrapper,
+        scenario.given("UrlDataScraper with filters: {}, {}, {}.", givenScraper,
                         "HTML tags remover","punctuation remover", " to lowercase")
                 .given("AND HTML page text: {@}", textWithHtmlTags)
-                .when("UrlDataScrapper's filters applied to text", action)
+                .when("UrlDataScraper's filters applied to text", action)
                 .then("Resulting string must be: {@}", expectedResultingText)
                 .perform();
 
@@ -52,10 +52,10 @@ class UrlDataScrapperTest extends LoggedTestCase{
 
     @Test
     void extractAndSend_BehaviorTest() {
-        UrlDataScrapper givenScrapper = getCustomScrapper();
-        AccessorService<Map<String, Object>> givenAccessorService = givenScrapper.accessorService;
+        UrlDataScraper givenScraper = getCustomScraper();
+        AccessorService<Map<String, Object>> givenAccessorService = givenScraper.accessorService;
 
-        BinaryFunction< UrlDataScrapper, AccessorService<Map<String, Object>>, Map<String, Object> > action =
+        BinaryFunction<UrlDataScraper, AccessorService<Map<String, Object>>, Map<String, Object> > action =
                 (scrapper, accessor) -> {scrapper.extractAndSend();
                                          return accessor.queuedData.peek();
                                         };
@@ -63,9 +63,9 @@ class UrlDataScrapperTest extends LoggedTestCase{
         Map<String, Object> expectedResult = getDataStub();
 
         TestScenario scenario = new TestScenario();
-        scenario.given("UrlDataScrapper: associated with some AccessorService", givenScrapper)
+        scenario.given("UrlDataScraper: associated with some AccessorService", givenScraper)
                 .given("AND some AccessorService used by scrapper", givenAccessorService)
-                .when("UrlDataScrapper's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
+                .when("UrlDataScraper's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
 
@@ -83,10 +83,10 @@ class UrlDataScrapperTest extends LoggedTestCase{
         return dataStub;
     }
 
-    private UrlDataScrapper getCustomScrapper() {
+    private UrlDataScraper getCustomScraper() {
         Map<String, Object> dataStub = getDataStub();
 
-        UrlDataScrapper customScrapper = new UrlDataScrapper(null, null, Collections.emptyList()) {
+        UrlDataScraper customScrapper = new UrlDataScraper(null, null, Collections.emptyList()) {
             @Override
             public Set<Map<String, Object>> extract(String dataInString) {
                 Set<Map<String, Object>> dataLines = new HashSet<>();
@@ -104,7 +104,7 @@ class UrlDataScrapperTest extends LoggedTestCase{
     private LoaderService<String> getFakeLoaderService() {
         LoaderService<String> fakeLoaderService = new LoaderService<String>() {
             @Override
-            public String getContent(String sourceAddress) {
+            public String getContent(String link) {
                 return "Line;Red;100";
             }
         };
