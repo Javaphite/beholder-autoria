@@ -10,7 +10,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-// NEEDS TESTS
 class UrlLoader implements Loader<String> {
     private static final Logger logger = LoggerFactory.getLogger(UrlLoader.class);
 
@@ -29,8 +28,9 @@ class UrlLoader implements Loader<String> {
             Scanner scanner = new Scanner(inStream);
             StringBuilder stringBuilder = new StringBuilder();
 
-            while (scanner.hasNextLine()) {
-                stringBuilder.append(scanner.nextLine());
+            scanner.useDelimiter("(?m)$"); //matches position after end of each line (multi-line mode)
+            while (scanner.hasNext()) {
+                stringBuilder.append(scanner.next());
             }
             result = stringBuilder.toString();
         }
@@ -48,7 +48,7 @@ class UrlLoader implements Loader<String> {
             this.url = new URL(link);
             logger.debug("URL object for {} successfully created!", link);
         }
-        catch (MalformedURLException badUrlException){
+        catch (MalformedURLException badUrlException) {
             logger.error(" String {} is not appropriate URL link: {}", link, badUrlException.getMessage());
             throw new IllegalArgumentException(badUrlException);
         }
@@ -73,5 +73,7 @@ class UrlLoader implements Loader<String> {
             throw new IllegalArgumentException(nullUrlErrorMsg);
         }
     }
+
+
 
 }
