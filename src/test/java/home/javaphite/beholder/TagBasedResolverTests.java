@@ -3,10 +3,8 @@ package home.javaphite.beholder;
 import home.javaphite.testing.LoggedTestCase;
 import home.javaphite.testing.TernaryFunction;
 import home.javaphite.testing.TestScenario;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -78,19 +76,4 @@ class TagBasedResolverTests extends LoggedTestCase {
        };
        return fakeLoader;
    }
-
-   private boolean checkExceptionThrown(Class<? extends Throwable> exceptionType, Executable executable) {
-       boolean result = false;
-       Throwable actualException = Assertions.assertThrows(exceptionType, executable);
-       String actualExceptionClassName = actualException.getClass().getName();
-       String expectedExceptionClassName = exceptionType.getName();
-
-       if (actualExceptionClassName.equals(expectedExceptionClassName)) {
-           result = true;
-       }
-
-       return result;
-   }
-
-
 }

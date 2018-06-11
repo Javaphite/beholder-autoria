@@ -2,9 +2,11 @@ package home.javaphite.testing;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.function.Executable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -68,6 +70,20 @@ public abstract class LoggedTestCase {
         return testsPassed;
     }
 
-    public static void countAsPassed(){ testsPassed++;}
+    protected static void countAsPassed(){ testsPassed++;}
+
+    //TODO: move this to appropriate place after first release
+    protected static boolean checkExceptionThrown(Class<? extends Throwable> exceptionType, Executable executable) {
+        boolean result = false;
+        Throwable actualException = Assertions.assertThrows(exceptionType, executable);
+        String actualExceptionClassName = actualException.getClass().getName();
+        String expectedExceptionClassName = exceptionType.getName();
+
+        if (actualExceptionClassName.equals(expectedExceptionClassName)) {
+            result = true;
+        }
+
+        return result;
+    }
 
 }

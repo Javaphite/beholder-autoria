@@ -59,12 +59,12 @@ public final class TestScenario {
     }
 
     private void check(Object result){
-        logger.trace("TEST DESCRIPTION: {}", this.toString());
+        logger.info("TEST DESCRIPTION: {}", this.toString());
 
         try {
-            logger.trace("RESULT: {}", Objects.toString(result));
+            logger.info("RESULT: {}", Objects.toString(result));
             Assertions.assertEquals(then, result, "Test failed!");
-            logger.trace("Test passed.");
+            logger.info("Test passed.");
         }
         catch (AssertionError error) {
             logger.error(error.getMessage());

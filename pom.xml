@@ -13,6 +13,7 @@
         <logback.version>1.2.3</logback.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>
+        <mockito.version>2.18.3</mockito.version>
     </properties>
 
     <dependencies>
@@ -41,7 +42,6 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- /SPRING FRAMEWORK -->
 
         <!-- JUNIT -->
         <dependency>
@@ -62,9 +62,8 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- /JUNIT -->
 
-        <!-- LOGGING TOOLS-->
+        <!-- SLF4J-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -83,12 +82,15 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
-        <!--  -->
+
+        <!-- MOCKITO -->
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 
