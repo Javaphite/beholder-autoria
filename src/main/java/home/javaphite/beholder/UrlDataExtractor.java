@@ -13,7 +13,7 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
     LoaderService<String> loaderService;
     AccessorService<Map<String, Object>> accessorService;
 
-    UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters){
+    UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters) {
         this.dataSchema=dataSchema;
         this.sourceUrl=sourceUrl;
         this.filters=new ArrayList<>(filters);
