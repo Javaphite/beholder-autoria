@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-abstract class UrlDataScraper implements DataExtractor<String, Map<String, Object>> {
+abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
     private DataSchema dataSchema;
     private String sourceUrl;
     private List<UnaryOperator<String>> filters;
     LoaderService<String> loaderService;
     AccessorService<Map<String, Object>> accessorService;
 
-    UrlDataScraper(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters){
+    UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters){
         this.dataSchema=dataSchema;
         this.sourceUrl=sourceUrl;
         this.filters=new ArrayList<>(filters);

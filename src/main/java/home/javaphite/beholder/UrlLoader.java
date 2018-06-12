@@ -58,11 +58,11 @@ class UrlLoader implements Loader<String> {
         if (url != null) {
             try {
                 logger.debug("Trying to establish connection to {}", url);
-                this.connection = this.url.openConnection();
+                connection = url.openConnection();
                 logger.debug("Connection to {} successfully established!", url);
             }
             catch (IOException connectionEstablishmentError) {
-                logger.error("Connection establishment failed: {}", connectionEstablishmentError.getMessage());
+                logger.error("Connection establishment failed: {}", connectionEstablishmentError);
                 throw new RuntimeException(connectionEstablishmentError);
             }
         }

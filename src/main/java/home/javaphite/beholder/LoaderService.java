@@ -6,7 +6,7 @@ class LoaderService<T> {
     private LoaderResolver<T> resolver;
     private Map<String, Loader<T>> loaders;
 
-    //Requires way to inject loaders
+    //TODO: Requires way to inject loaders
 
     T getContent(String link) {
         Loader<? extends T> loader = resolver.getLoader(loaders, link);
