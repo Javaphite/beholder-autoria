@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 @Tag("home.javaphite.beholder.UrlDataExtractor")
-class UrlDataExtractorTests extends LoggedTestCase {
+class UrlDataExtractorTest extends LoggedTestCase {
     @Test
     void applyFilters_MustReturnStringTransformedWithAllFilters(){
         String textWithHtmlTags="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +

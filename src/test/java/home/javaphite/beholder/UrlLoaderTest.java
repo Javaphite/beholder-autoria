@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.net.MalformedURLException;
 
 
-class UrlLoaderTests extends LoggedTestCase {
+class UrlLoaderTest extends LoggedTestCase {
 
     @Test
     void loadMethod_BehaviourTest() {

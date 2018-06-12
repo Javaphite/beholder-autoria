@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.HashMap;
 import java.util.Map;
 
-class TagBasedResolverTests extends LoggedTestCase {
+class TagBasedResolverTest extends LoggedTestCase {
     @ParameterizedTest
     @ValueSource(strings={"custom", "unknown"})
     @Tag("getLoader")
