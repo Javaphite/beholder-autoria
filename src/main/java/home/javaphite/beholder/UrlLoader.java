@@ -74,6 +74,4 @@ class UrlLoader implements Loader<String> {
         }
     }
 
-
-
 }
