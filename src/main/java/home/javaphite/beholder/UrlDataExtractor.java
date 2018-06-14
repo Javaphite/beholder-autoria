@@ -1,5 +1,8 @@
 package home.javaphite.beholder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +10,9 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
-    private DataSchema dataSchema;
+    static final Logger logger = LoggerFactory.getLogger(UrlDataExtractor.class);
+
+    DataSchema dataSchema;
     private String sourceUrl;
     private List<UnaryOperator<String>> filters;
     LoaderService<String> loaderService;

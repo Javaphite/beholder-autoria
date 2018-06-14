@@ -1,12 +1,15 @@
 package home.javaphite.beholder;
 
+import java.util.HashMap;
 import java.util.Map;
 
 class LoaderService<T> {
     private LoaderResolver<T> resolver;
-    private Map<String, Loader<T>> loaders;
+    private Map<String, Loader<T>> loaders = new HashMap<>();
 
-    //TODO: Requires way to inject loaders
+    void registerLoader(String alias, Loader<T> loader) {
+        loaders.put(alias, loader);
+    }
 
     T getContent(String link) {
         Loader<? extends T> loader = resolver.getLoader(loaders, link);

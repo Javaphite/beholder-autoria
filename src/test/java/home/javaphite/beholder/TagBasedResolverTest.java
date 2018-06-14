@@ -28,7 +28,7 @@ class TagBasedResolverTest extends LoggedTestCase {
                 .given("AND group of Loaders: {@}", givenLoaders)
                 .given("AND tag: {@}", testedTag)
                 .when("Trying to get loader by tag", action)
-                .then("Returned Loader must be: {@}", expectedResult)
+                .then("Returned Loader must be equal to: {@}", expectedResult)
                 .perform();
 
         countAsPassed();

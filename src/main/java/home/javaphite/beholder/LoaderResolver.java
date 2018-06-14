@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 interface LoaderResolver<T> {
-    Loader<T> getLoader(Map<String, Loader<T>> loaders, String link) throws IllegalArgumentException ;
+    Loader<T> getLoader(Map<String, Loader<T>> loaders, String link) throws IllegalArgumentException;
 
-    default Loader<T> getLoader(Map<String, Loader<T>> loaders, Supplier<String> linkSupplier)  throws IllegalArgumentException  {
+    default Loader<T> getLoader(Map<String, Loader<T>> loaders, Supplier<String> linkSupplier)  throws IllegalArgumentException {
         return getLoader(loaders, linkSupplier.get());
     }
 
