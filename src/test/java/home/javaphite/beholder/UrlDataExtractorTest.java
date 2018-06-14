@@ -6,12 +6,14 @@ import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
@@ -53,9 +55,9 @@ class UrlDataExtractorTest extends LoggedTestCase {
     @Test
     void extractAndSend_BehaviorTest() {
         UrlDataExtractor givenExtractor = getCustomExtractor();
-        AccessorService<Map<String, Object>> givenAccessorService = givenExtractor.accessorService;
+        FakeAccessorService givenAccessorService = (FakeAccessorService) givenExtractor.accessorService;
 
-        BinaryFunction<UrlDataExtractor, AccessorService<Map<String, Object>>, Map<String, Object> > action =
+        BinaryFunction<UrlDataExtractor, FakeAccessorService, Map<String, Object> > action =
                 (scrapper, accessor) -> {scrapper.extractAndSend();
                                          return accessor.queuedData.peek();
                                         };
@@ -112,11 +114,15 @@ class UrlDataExtractorTest extends LoggedTestCase {
     }
 
     private AccessorService<Map<String, Object>> getFakeAccessorService() {
-        return new AccessorService<Map<String, Object>>() {
-            @Override
-            public void queue(Map<String, Object> data) {
-                queuedData.add(data);
-            }
-        };
+        return new FakeAccessorService();
+    }
+
+    private class FakeAccessorService implements AccessorService<Map<String, Object>> {
+        Queue<Map<String, Object>> queuedData = new ArrayDeque<>();
+
+        @Override
+        public void queue(Map<String, Object> data) {
+            queuedData.add(data);
+        }
     }
 }
