@@ -10,6 +10,7 @@
     <properties>
         <spring.version>5.0.5.RELEASE</spring.version>
         <jackson.version>2.9.5</jackson.version>
+        <guava.version>23.0</guava.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
@@ -49,6 +50,13 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- GOOGLE GUAVA -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
 
         <!-- JUNIT -->

@@ -1,6 +1,13 @@
 package home.javaphite.beholder;
 
-import java.util.*;
+import com.google.common.base.Objects;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Class for definition of some structured data format.
@@ -15,32 +22,31 @@ import java.util.*;
 class DataSchema {
     private final Map<String, Class<?>> fields;
 
-    private DataSchema(Map<String, Class<?>> fields){
-        // Make copy of input Map to prevent possible outer references to private field
-        this.fields=new LinkedHashMap<>(fields);
+    private DataSchema(Map<String, Class<?>> fields) {
+        this.fields = new LinkedHashMap<>(fields);
     }
 
     /**
-     * Static factory method that returns instance of DataSchema class
-     * defined with <i>{@code map}</i> parameter.
+     * Static factory method for DataSchema
      * @param map describes structure of data format to be represented with
-     *            instance of {@link DataSchema}. <br>
+     *            new instance of {@link DataSchema}. <br>
      *            Consists of: <br>
-     *            {@link String} keys - names of data fields;<br>
-     *            {@link Class} values - types of data fields.
+     *            {@link String} keys - names of fields;<br>
+     *            {@link Class} values - types of fields.
      * @return instance of {@link DataSchema} described by <i>{@code map}</i> parameter.
      */
-    static DataSchema getSchema(Map<String, Class<?>> map){
-            DataSchema newSchema=new DataSchema(Objects.requireNonNull(map));
-
-            return newSchema;
+    static DataSchema getSchema(Map<String, Class<?>> map) {
+        return new DataSchema(requireNonNull(map));
     }
 
-    //TODO: add JavaDoc comments or delete all other JavaDocs since access level now package-private
-    Map<String, Object> createDataBlank(){
-        Map<String, Object> dataBlank=new LinkedHashMap<>();
-        Iterator<String> fieldIterator = fields.keySet().iterator();
-        fieldIterator.forEachRemaining(fieldName->dataBlank.put(fieldName, null));
+    /**
+     * Creates empty-valued data structure with fields defined by this DataSchema
+     * @return {@link Map} which's keys are field names of this DataSchema and values are {@code null}
+     */
+    Map<String, Object> createDataBlank() {
+        Map<String, Object> dataBlank = new LinkedHashMap<>();
+        Iterator<String> i = fields.keySet().iterator();
+        i.forEachRemaining(field -> dataBlank.put(field, null));
 
         return dataBlank;
     }
@@ -57,47 +63,37 @@ class DataSchema {
      *              as this {@link DataSchema}; <br>
      *          3) <i>{@code testedData}</i> consists of the same <u>fields</u> (names and types)
      *              as this {@link DataSchema} (order not taken into account); <br>
-     */
-    //TODO: add exceptions and messages about null maps and null values
-    boolean isValidData(Map<String, Object> testedData) {
-        if (Objects.isNull(testedData)) return false;
-
+     **/
+    boolean isValid(Map<String, Object> testedData) {
+        if (isNull(testedData)) return false;
         if (testedData.size() != fields.size()) return false;
 
         for (String fieldName : testedData.keySet()) {
-            if (!fields.containsKey(fieldName)) return false;
+            Class<?> expectedType = fields.get(fieldName);
+            Object actualValue = testedData.get(fieldName);
 
-            if (!fields.get(fieldName).isInstance(testedData.get(fieldName))) return false;
+            if (!fields.containsKey(fieldName)) return false;
+            if (!expectedType.isInstance(actualValue)) return false;
         }
         return true;
     }
 
     @Override
-    public int hashCode(){
-        int hashcode=0;
-        int hashCodeBase=113; // prime number used as base for hashcode
-
-        hashcode+=Arrays.deepHashCode(fields.keySet().toArray())*hashCodeBase;
-        hashcode+=Arrays.deepHashCode(fields.values().toArray());
-
-        return hashcode;
-    }
-
-    @Override
-    public boolean equals(Object dataSchema){
-        if (dataSchema==null || !(dataSchema instanceof DataSchema)) return false;
-
-        if (this==dataSchema) return true;
-
-        boolean result;
-        result=Arrays.deepEquals(this.fields.keySet().toArray(), ((DataSchema) dataSchema).fields.keySet().toArray());
-        result&=Arrays.deepEquals(this.fields.values().toArray(), ((DataSchema) dataSchema).fields.values().toArray());
-
-        return result;
-    }
-
-    @Override
     public String toString() {
         return fields.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataSchema schema = (DataSchema) o;
+        return Objects.equal(fields, schema.fields);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(fields);
     }
 }

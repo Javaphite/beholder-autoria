@@ -81,7 +81,7 @@ class DataSchemaTest extends LoggedTestCase {
         countAsPassed();
     }
 
-    @Tag("isValidData")
+    @Tag("isValid")
     @ParameterizedTest
     @EnumSource(value= DataPreset.class,
                 names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
@@ -89,13 +89,13 @@ class DataSchemaTest extends LoggedTestCase {
         DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
         DataSchema givenSchema = schemaOf(samplePreset);
         Map<String, Object> givenData = dataOf(testedPreset);
-        BinaryFunction<DataSchema, Map<String, Object>, Boolean> action = DataSchema::isValidData;
+        BinaryFunction<DataSchema, Map<String, Object>, Boolean> action = DataSchema::isValid;
         Boolean expectedResult = (testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
         TestScenario scenario=new TestScenario();
         scenario.given("DataSchema: {@}", givenSchema)
                 .given("AND data: {}", givenData, testedPreset)
-                .when("Data tested for validity with isValidData method", action)
+                .when("Data tested for validity with isValid method", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
 
