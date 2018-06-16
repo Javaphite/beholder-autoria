@@ -97,20 +97,20 @@ class UrlDataExtractorTest extends LoggedTestCase {
             }
         };
 
-        customExtractor.setLoaderService(getFakeLoaderService());
+        customExtractor.setLoadService(getFakeLoaderService());
         customExtractor.setAccessorService(getFakeAccessorService());
 
         return customExtractor;
     }
 
-    private LoaderService<String> getFakeLoaderService() {
-        LoaderService<String> fakeLoaderService = new LoaderService<String>() {
+    private LoadService<String> getFakeLoaderService() {
+        LoadService<String> fakeLoadService = new LoadService<String>() {
             @Override
             public String getContent(String link) {
                 return "Line;Red;100";
             }
         };
-        return fakeLoaderService;
+        return fakeLoadService;
     }
 
     private AccessorService<Map<String, Object>> getFakeAccessorService() {

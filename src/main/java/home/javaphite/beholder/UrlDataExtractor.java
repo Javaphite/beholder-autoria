@@ -15,7 +15,7 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
     DataSchema dataSchema;
     private String sourceUrl;
     private List<UnaryOperator<String>> filters;
-    LoaderService<String> loaderService;
+    LoadService<String> loadService;
     AccessorService<Map<String, Object>> accessorService;
 
     UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters) {
@@ -32,7 +32,7 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
     }
 
     void extractAndSend() {
-        String uploadedText = loaderService.getContent(sourceUrl);
+        String uploadedText = loadService.getContent(sourceUrl);
         String filteredText = applyFilters(uploadedText);
         Set<Map<String, Object>> dataLines = extract(filteredText);
 
@@ -45,7 +45,7 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
         this.accessorService = accessorService;
     }
 
-    void setLoaderService(LoaderService<String> loaderService) {
-        this.loaderService = loaderService;
+    void setLoadService(LoadService<String> loadService) {
+        this.loadService = loadService;
     }
 }
