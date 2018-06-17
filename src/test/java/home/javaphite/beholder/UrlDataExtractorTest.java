@@ -55,9 +55,9 @@ class UrlDataExtractorTest extends LoggedTestCase {
     @Test
     void extractAndSend_BehaviorTest() {
         UrlDataExtractor givenExtractor = getCustomExtractor();
-        FakeAccessorService givenAccessorService = (FakeAccessorService) givenExtractor.accessorService;
+        FakeStorageService givenStorageService = (FakeStorageService) givenExtractor.storageService;
 
-        BinaryFunction<UrlDataExtractor, FakeAccessorService, Map<String, Object> > action =
+        BinaryFunction<UrlDataExtractor, FakeStorageService, Map<String, Object> > action =
                 (scrapper, accessor) -> {scrapper.extractAndSend();
                                          return accessor.queuedData.peek();
                                         };
@@ -65,8 +65,8 @@ class UrlDataExtractorTest extends LoggedTestCase {
         Map<String, Object> expectedResult = getDataStub();
 
         TestScenario scenario = new TestScenario();
-        scenario.given("UrlDataExtractor: associated with some AccessorService", givenExtractor)
-                .given("AND some AccessorService used by scrapper", givenAccessorService)
+        scenario.given("UrlDataExtractor: associated with some StorageService", givenExtractor)
+                .given("AND some StorageService used by scrapper", givenStorageService)
                 .when("UrlDataExtractor's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
@@ -76,7 +76,7 @@ class UrlDataExtractorTest extends LoggedTestCase {
 
     private Map<String, Object> getDataStub() {
         Map<String, Object> dataStub = new HashMap<>();
-        String fieldValuesAsString = getFakeLoaderService().getContent(null);
+        String fieldValuesAsString = getFakeLoadService().getContent(null);
         String[] fieldValues = fieldValuesAsString.split(";");
         dataStub.put("field1", fieldValues[0]);
         dataStub.put("field2", fieldValues[1]);
@@ -97,13 +97,13 @@ class UrlDataExtractorTest extends LoggedTestCase {
             }
         };
 
-        customExtractor.setLoadService(getFakeLoaderService());
-        customExtractor.setAccessorService(getFakeAccessorService());
+        customExtractor.setLoadService(getFakeLoadService());
+        customExtractor.setStorageService(getFakeStorageService());
 
         return customExtractor;
     }
 
-    private LoadService<String> getFakeLoaderService() {
+    private LoadService<String> getFakeLoadService() {
         LoadService<String> fakeLoadService = new LoadService<String>() {
             @Override
             public String getContent(String link) {
@@ -113,16 +113,19 @@ class UrlDataExtractorTest extends LoggedTestCase {
         return fakeLoadService;
     }
 
-    private AccessorService<Map<String, Object>> getFakeAccessorService() {
-        return new FakeAccessorService();
+    private StorageService<Map<String, Object>> getFakeStorageService() {
+        return new FakeStorageService();
     }
 
-    private class FakeAccessorService implements AccessorService<Map<String, Object>> {
+    private class FakeStorageService implements StorageService<Map<String, Object>> {
         Queue<Map<String, Object>> queuedData = new ArrayDeque<>();
 
         @Override
         public void queue(Map<String, Object> data) {
             queuedData.add(data);
         }
+
+        @Override
+        public void store() {}
     }
 }
