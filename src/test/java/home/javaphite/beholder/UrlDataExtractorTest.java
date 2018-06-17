@@ -20,8 +20,8 @@ import java.util.function.UnaryOperator;
 @Tag("home.javaphite.beholder.UrlDataExtractor")
 class UrlDataExtractorTest extends LoggedTestCase {
     @Test
-    void applyFilters_MustReturnStringTransformedWithAllFilters(){
-        String textWithHtmlTags="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
+    void applyFilters_MustReturnStringTransformedWithAllFilters() {
+        String htmlDocSample ="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
                                 "</head><body>Content of the document......</body></html>";
 
         List<UnaryOperator<String>> filters = new ArrayList<>();
@@ -31,7 +31,7 @@ class UrlDataExtractorTest extends LoggedTestCase {
         filters.add(input->input.replaceAll(punctuationCharsPattern,""));
         filters.add(String::toLowerCase);
 
-        UrlDataExtractor givenExtractor = new UrlDataExtractor(null, null, filters) {
+        UrlDataExtractor extractor = new UrlDataExtractor(null, null, filters) {
             @Override
            public Set<Map<String, Object>> extract(String dataInDelimitedString) {
                 return null;
@@ -39,14 +39,14 @@ class UrlDataExtractorTest extends LoggedTestCase {
         };
 
         BinaryFunction<UrlDataExtractor, String, String> action = UrlDataExtractor::applyFilters;
-        String expectedResultingText="titleofthedocumentcontentofthedocument";
+        String expectedResult="titleofthedocumentcontentofthedocument";
 
         TestScenario scenario = new TestScenario();
-        scenario.given("UrlDataExtractor with filters: {}, {}, {}.", givenExtractor,
+        scenario.given("UrlDataExtractor with filters: {}, {}, {}.", extractor,
                         "HTML tags remover","punctuation remover", " to lowercase")
-                .given("AND HTML page text: {@}", textWithHtmlTags)
+                .given("AND HTML page text: {@}", htmlDocSample)
                 .when("UrlDataExtractor's filters applied to text", action)
-                .then("Resulting string must be: {@}", expectedResultingText)
+                .then("Resulting string must be: {@}", expectedResult)
                 .perform();
 
         countAsPassed();
@@ -54,19 +54,17 @@ class UrlDataExtractorTest extends LoggedTestCase {
 
     @Test
     void extractAndSend_BehaviorTest() {
-        UrlDataExtractor givenExtractor = getCustomExtractor();
-        FakeStorageService givenStorageService = (FakeStorageService) givenExtractor.storageService;
+        UrlDataExtractor extractor = getCustomExtractor();
+        FakeStorageService storageService = (FakeStorageService) extractor.storageService;
 
         BinaryFunction<UrlDataExtractor, FakeStorageService, Map<String, Object> > action =
-                (scrapper, accessor) -> {scrapper.extractAndSend();
-                                         return accessor.queuedData.peek();
-                                        };
+                (e, s) -> { e.extractAndSend(); return s.queuedData.peek(); };
 
         Map<String, Object> expectedResult = getDataStub();
 
         TestScenario scenario = new TestScenario();
-        scenario.given("UrlDataExtractor: associated with some StorageService", givenExtractor)
-                .given("AND some StorageService used by scrapper", givenStorageService)
+        scenario.given("UrlDataExtractor: associated with some StorageService", extractor)
+                .given("AND some StorageService used by scrapper", storageService)
                 .when("UrlDataExtractor's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
@@ -76,8 +74,8 @@ class UrlDataExtractorTest extends LoggedTestCase {
 
     private Map<String, Object> getDataStub() {
         Map<String, Object> dataStub = new HashMap<>();
-        String fieldValuesAsString = getFakeLoadService().getContent(null);
-        String[] fieldValues = fieldValuesAsString.split(";");
+        String fieldValuesAsStrings = getFakeLoadService().getContent(null);
+        String[] fieldValues = fieldValuesAsStrings.split(";");
         dataStub.put("field1", fieldValues[0]);
         dataStub.put("field2", fieldValues[1]);
         dataStub.put("field3", fieldValues[2]);
@@ -96,7 +94,6 @@ class UrlDataExtractorTest extends LoggedTestCase {
                 return dataLines;
             }
         };
-
         customExtractor.setLoadService(getFakeLoadService());
         customExtractor.setStorageService(getFakeStorageService());
 

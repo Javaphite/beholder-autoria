@@ -14,11 +14,11 @@ class LoadServiceTest extends LoggedTestCase {
         LoadService<String> service = new LoadService<>();
         LoaderResolver<String> resolver = mock(LoaderResolver.class);
         Loader<String> loader = mock(UrlLoader.class);
+        MonoFunction<LoadService<String>, String> action = s -> s.getContent("some link");
 
         when(loader.load()).thenReturn(testLine);
         when(resolver.getLoader(anyString())).thenReturn(loader);
         service.setResolver(resolver);
-        MonoFunction<LoadService<String>, String> action = s -> s.getContent("some link");
 
         TestScenario scenario = new TestScenario();
         scenario.given("LoadService specialized on strings: {@}", service)

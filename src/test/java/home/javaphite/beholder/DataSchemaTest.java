@@ -16,7 +16,7 @@ import java.util.TreeMap;
 @Tag("home.javaphite.beholder.DataSchema")
 class DataSchemaTest extends LoggedTestCase {
 
-    enum DataPreset{
+    enum DataPreset {
         // Base data variant
         STR_INT_DEC_BOOL(new String[]{"name", "age", "height", "online"},
                          new Object[]{"User101", 20, 1.8, Boolean.TRUE}),
@@ -37,7 +37,7 @@ class DataSchemaTest extends LoggedTestCase {
         DIFF_STR_INT_DEC_BOOL(new String[]{"type", "max load", "engine capacity", "isothermal"},
                               new Object[]{"track", 10, 8.5, Boolean.TRUE});
 
-        DataPreset(String[] fields, Object[] values){
+        DataPreset(String[] fields, Object[] values) {
             this.presetValues=values;
             this.presetFields=fields;
         }
@@ -47,7 +47,7 @@ class DataSchemaTest extends LoggedTestCase {
 
         @Override
         public String toString() {
-            StringBuilder messageBuilder=new StringBuilder("");
+            StringBuilder messageBuilder = new StringBuilder("");
 
             messageBuilder.append(this.name());
             messageBuilder.append(" = { ");
@@ -64,16 +64,16 @@ class DataSchemaTest extends LoggedTestCase {
 
     @Tag("createDataBlank")
     @Test
-    void createDataBlankMustReturnNullFilledMapWithSchemaDefinedFields(){
-        DataSchema givenSchema=schemaOf(DataPreset.STR_INT_DEC);
+    void createDataBlank_MustReturnNullFilledMapWithSchemaDefinedFields() {
+        DataSchema schema = schemaOf(DataPreset.STR_INT_DEC);
         MonoFunction<DataSchema, Map<String, Object>> action = DataSchema::createDataBlank;
-        Map<String, Object> expectedReturn=new TreeMap<>();
+        Map<String, Object> expectedReturn = new TreeMap<>();
         expectedReturn.put("name", null);
         expectedReturn.put("age", null);
         expectedReturn.put("height", null);
 
         TestScenario scenario = new TestScenario();
-        scenario.given("<DataSchema> {@}", givenSchema)
+        scenario.given("<DataSchema> {@}", schema)
                 .when("<DataSchema's> createDataBlank method invoked", action)
                 .then("Returned map must be equal to {@}", expectedReturn)
                 .perform();
@@ -83,18 +83,18 @@ class DataSchemaTest extends LoggedTestCase {
 
     @Tag("isValid")
     @ParameterizedTest
-    @EnumSource(value= DataPreset.class,
-                names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
-    void testingIsValidDataBehavior_OnCompatibleAndDiffKindsOfNonCompatibleData(DataPreset testedPreset){
+    @EnumSource(value = DataPreset.class,
+                names = {"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "STR_INT_DEC", "STR_NULL_DEC_BOOL"})
+    void testingIsValidDataBehavior_OnCompatibleAndDiffKindsOfNonCompatibleData(DataPreset testedPreset) {
         DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
-        DataSchema givenSchema = schemaOf(samplePreset);
-        Map<String, Object> givenData = dataOf(testedPreset);
+        DataSchema schema = schemaOf(samplePreset);
+        Map<String, Object> data = dataOf(testedPreset);
         BinaryFunction<DataSchema, Map<String, Object>, Boolean> action = DataSchema::isValid;
         Boolean expectedResult = (testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        TestScenario scenario=new TestScenario();
-        scenario.given("DataSchema: {@}", givenSchema)
-                .given("AND data: {}", givenData, testedPreset)
+        TestScenario scenario = new TestScenario();
+        scenario.given("DataSchema: {@}", schema)
+                .given("AND data: {}", data, testedPreset)
                 .when("Data tested for validity with isValid method", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
@@ -104,16 +104,16 @@ class DataSchemaTest extends LoggedTestCase {
 
     @Tag("hashCode")
     @ParameterizedTest
-    @EnumSource(value= DataPreset.class,
-            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
-    void testingHashCodeBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset){
-        DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
-        DataSchema firstSchema= schemaOf(samplePreset);
-        DataSchema secondSchema= schemaOf(testedPreset);
+    @EnumSource(value = DataPreset.class,
+            names = {"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL", "STR_NULL_DEC_BOOL"})
+    void testingHashCodeBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset) {
+        DataPreset samplePreset = DataPreset.STR_INT_DEC_BOOL;
+        DataSchema firstSchema = schemaOf(samplePreset);
+        DataSchema secondSchema = schemaOf(testedPreset);
         BinaryFunction<DataSchema, DataSchema, Boolean> action = (ds1, ds2) -> ds1.hashCode()==ds2.hashCode();
-        Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
+        Boolean expectedResult = (testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
-        TestScenario scenario=new TestScenario();
+        TestScenario scenario = new TestScenario();
         scenario.given("First DataSchema: {@} ({})", firstSchema, firstSchema.hashCode())
                 .given("AND second DataSchema: {@} ({})", secondSchema, secondSchema.hashCode())
                 .when("Hashcodes of given schemas compared for equality", action)
@@ -125,18 +125,18 @@ class DataSchemaTest extends LoggedTestCase {
 
     @Tag("equals")
     @ParameterizedTest
-    @EnumSource(value= DataPreset.class,
-            names={"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
-    void testingEqualsBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset){
+    @EnumSource(value = DataPreset.class,
+            names = {"STR_INT_DEC_BOOL","STR_CHR_DEC_BOOL", "DIFF_STR_INT_DEC_BOOL","STR_NULL_DEC_BOOL"})
+    void testingEqualsBehavior_OnEqualAndDiffKindsOfNonEqualSchemas(DataPreset testedPreset) {
         DataPreset samplePreset=DataPreset.STR_INT_DEC_BOOL;
-        DataSchema givenFirstSchema= schemaOf(samplePreset);
-        DataSchema givenSecondSchema= schemaOf(testedPreset);
+        DataSchema firstSchema= schemaOf(samplePreset);
+        DataSchema secondSchema= schemaOf(testedPreset);
         BinaryFunction<DataSchema, DataSchema, Boolean> action = DataSchema::equals;
         Boolean expectedResult=(testedPreset==samplePreset)? Boolean.TRUE: Boolean.FALSE;
 
         TestScenario scenario=new TestScenario();
-        scenario.given("First DataSchema: {@}", givenFirstSchema)
-                .given("AND second DataSchema: {@}", givenSecondSchema)
+        scenario.given("First DataSchema: {@}", firstSchema)
+                .given("AND second DataSchema: {@}", secondSchema)
                 .when("Given schemas compared for equality with equals method", action)
                 .then("Result must be {@}", expectedResult)
                 .perform();
@@ -145,29 +145,27 @@ class DataSchemaTest extends LoggedTestCase {
     }
 
     // Helper method: creates DataSchema from DataPreset
-    private DataSchema schemaOf(DataPreset preset){
+    private DataSchema schemaOf(DataPreset preset) {
         Map<String, Class<?>> schemaDescriptor = new LinkedHashMap<>();
-        String[] fields=preset.presetFields;
-        Object[] values=preset.presetValues;
+        String[] fields = preset.presetFields;
+        Object[] values = preset.presetValues;
 
         for (int i=0; i<fields.length; i++){
             // There is no Class<T> instance for null values, so used Class<Integer> by default
             schemaDescriptor.put(fields[i], values[i]!=null? values[i].getClass(): Integer.class);
         }
-
         return DataSchema.getSchema(schemaDescriptor);
     }
 
     // Helper method: creates data imitation from DataPreset
-    private Map<String, Object> dataOf(DataPreset preset){
+    private Map<String, Object> dataOf(DataPreset preset) {
         Map<String, Object> data = new LinkedHashMap<>();
-        String[] fields=preset.presetFields;
-        Object[] values=preset.presetValues;
+        String[] fields = preset.presetFields;
+        Object[] values = preset.presetValues;
 
         for (int i=0; i<fields.length; i++){
             data.put(fields[i], values[i]);
         }
-
         return data;
     }
 
