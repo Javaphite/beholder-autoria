@@ -2,7 +2,7 @@ package home.javaphite.beholder;
 
 import home.javaphite.testing.BinaryFunction;
 import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.MonoFunction;
+import home.javaphite.testing.UnaryFunction;
 import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,7 +66,7 @@ class DataSchemaTest extends LoggedTestCase {
     @Test
     void createDataBlank_MustReturnNullFilledMapWithSchemaDefinedFields() {
         DataSchema schema = schemaOf(DataPreset.STR_INT_DEC);
-        MonoFunction<DataSchema, Map<String, Object>> action = DataSchema::createDataBlank;
+        UnaryFunction<DataSchema, Map<String, Object>> action = DataSchema::createDataBlank;
         Map<String, Object> expectedReturn = new TreeMap<>();
         expectedReturn.put("name", null);
         expectedReturn.put("age", null);

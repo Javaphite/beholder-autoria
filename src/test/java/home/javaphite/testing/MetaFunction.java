@@ -12,7 +12,7 @@ package home.javaphite.testing;
 public interface MetaFunction<R> {
     default <X> R apply(X value) {
         R result = null;
-        result = ((MonoFunction<X, R>) this).applyForParameters(value);
+        result = ((UnaryFunction<X, R>) this).applyForParameters(value);
         return result;
     }
 

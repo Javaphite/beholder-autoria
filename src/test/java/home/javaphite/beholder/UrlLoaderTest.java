@@ -1,7 +1,7 @@
 package home.javaphite.beholder;
 
 import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.MonoFunction;
+import home.javaphite.testing.UnaryFunction;
 import home.javaphite.testing.TestScenario;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class UrlLoaderTest extends LoggedTestCase {
         File file = createTestFile(text);
         String filePath = getFileUrl(file);
         Loader<String> loader = new UrlLoader(filePath);
-        MonoFunction<Loader<String>, String> action = Loader::load;
+        UnaryFunction<Loader<String>, String> action = Loader::load;
 
         TestScenario scenario = new TestScenario();
         scenario.given("UrlLoader linked with file {}", loader, filePath)
