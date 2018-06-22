@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/*
+Code below uses auto.ria.com API.
+For more details please visit: https://AUTO.RIA.com, https://developers.ria.com
+*/
+
 // NEEDS TEST
 // NEEDS CLEANING
 class AutoRiaApiExtractor extends UrlDataExtractor {

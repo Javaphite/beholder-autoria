@@ -13,10 +13,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-/*
-Code below uses auto.ria.com API.
-For more details please visit: https://AUTO.RIA.com, https://developers.ria.com
-*/
 
 // UNDER CONSTRUCTION
 // NEEDS TEST
