@@ -7,10 +7,22 @@
     <version>0.0.1</version>
     <name>beholder-ms</name>
 
+    <repositories>
+        <!-- LUCENE SNAPSHOT FOR ELASTICSEARCH-->
+        <repository>
+            <id>elastic-lucene-snapshots</id>
+            <name>Elastic Lucene Snapshots</name>
+            <url>http://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/00142c9</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <spring.version>5.0.5.RELEASE</spring.version>
         <jackson.version>2.9.5</jackson.version>
         <guava.version>23.0</guava.version>
+        <elasticsearch.hl-api.version>6.3.0</elasticsearch.hl-api.version>>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
@@ -57,6 +69,13 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+
+        <!-- ELASTICSEARCH -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>${elasticsearch.hl-api.version}</version>
         </dependency>
 
         <!-- JUNIT -->
