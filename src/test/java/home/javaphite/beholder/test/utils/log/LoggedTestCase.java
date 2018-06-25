@@ -1,4 +1,4 @@
-package home.javaphite.testing;
+package home.javaphite.beholder.test.utils.log;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;

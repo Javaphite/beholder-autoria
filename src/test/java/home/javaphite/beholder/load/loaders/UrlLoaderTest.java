@@ -1,8 +1,8 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.load.loaders;
 
-import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.UnaryFunction;
-import home.javaphite.testing.TestScenario;
+import home.javaphite.beholder.test.utils.log.LoggedTestCase;
+import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
+import home.javaphite.beholder.test.utils.scenario.TestScenario;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;

@@ -1,4 +1,4 @@
-package home.javaphite.testing;
+package home.javaphite.beholder.test.utils.scenario;
 
 @FunctionalInterface
 public interface BinaryFunction<X, Y, R> extends MetaFunction<R> {

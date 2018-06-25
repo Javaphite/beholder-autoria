@@ -1,4 +1,4 @@
-package home.javaphite.testing;
+package home.javaphite.beholder.test.utils.scenario;
 
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;

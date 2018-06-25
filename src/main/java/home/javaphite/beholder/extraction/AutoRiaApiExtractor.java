@@ -1,7 +1,8 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.extraction;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import home.javaphite.beholder.data.DataSchema;
 
 import javax.xml.bind.DataBindingException;
 import java.io.IOException;
@@ -19,21 +20,21 @@ For more details please visit: https://AUTO.RIA.com, https://developers.ria.com
 
 // NEEDS TEST
 // NEEDS CLEANING
-class AutoRiaApiExtractor extends UrlDataExtractor {
+public class AutoRiaApiExtractor extends UrlDataExtractor {
     private String orderInfoRequestTemplate;
 
-    AutoRiaApiExtractor(DataSchema schema, String searchRequest, String orderInfoRequestTemplate) {
+    public AutoRiaApiExtractor(DataSchema schema, String searchRequest, String orderInfoRequestTemplate) {
         super(schema, searchRequest, Collections.emptyList());
         this.orderInfoRequestTemplate = orderInfoRequestTemplate;
     }
 
     @Override
-    public Set<Map<String, Object>> extract(String searchResponseJson) {
+    public Set<Map<String, Object>> extract(String source) {
         List<String> orderIds = new ArrayList<>();
         List<String> orders = new ArrayList<>();
         Set<Map<String, Object>> dataEntries = new LinkedHashSet<>();
 
-        JsonNode responseTree = getJsonTree(searchResponseJson);
+        JsonNode responseTree = getJsonTree(source);
         for (JsonNode node : responseTree.findValue("ids")) {
             orderIds.add(node.textValue());
         }
@@ -53,10 +54,12 @@ class AutoRiaApiExtractor extends UrlDataExtractor {
                 dataEntry.put(field, value.asText());
             }
 
-            if (dataSchema.isValid(dataEntry))
+            if (dataSchema.isValid(dataEntry)) {
                 dataEntries.add(dataEntry);
-            else
+            }
+            else {
                 throw new RuntimeException("Data reading error!" + dataEntry);
+            }
         }
 
         return dataEntries;
@@ -70,7 +73,7 @@ class AutoRiaApiExtractor extends UrlDataExtractor {
             jsonTree = mapper.readTree(jsonString);
         }
         catch (IOException jsonReadingError) {
-            logger.error("JSON reading error: {}", jsonReadingError);
+            logger.error("JSON reading error: ", jsonReadingError);
             throw new DataBindingException(jsonReadingError);
         }
 

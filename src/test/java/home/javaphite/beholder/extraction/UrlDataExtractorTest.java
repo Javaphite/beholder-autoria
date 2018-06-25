@@ -1,8 +1,10 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.extraction;
 
-import home.javaphite.testing.BinaryFunction;
-import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.TestScenario;
+import home.javaphite.beholder.storage.StorageService;
+import home.javaphite.beholder.load.LoadService;
+import home.javaphite.beholder.test.utils.scenario.BinaryFunction;
+import home.javaphite.beholder.test.utils.log.LoggedTestCase;
+import home.javaphite.beholder.test.utils.scenario.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +19,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-@Tag("home.javaphite.beholder.UrlDataExtractor")
+@Tag("home.javaphite.beholder.extraction.UrlDataExtractor")
 class UrlDataExtractorTest extends LoggedTestCase {
     @Test
     void applyFilters_MustReturnStringTransformedWithAllFilters() {

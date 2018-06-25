@@ -1,9 +1,9 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.data;
 
-import home.javaphite.testing.BinaryFunction;
-import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.UnaryFunction;
-import home.javaphite.testing.TestScenario;
+import home.javaphite.beholder.test.utils.scenario.BinaryFunction;
+import home.javaphite.beholder.test.utils.log.LoggedTestCase;
+import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
+import home.javaphite.beholder.test.utils.scenario.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-@Tag("home.javaphite.beholder.DataSchema")
+@Tag("home.javaphite.beholder.data.DataSchema")
 class DataSchemaTest extends LoggedTestCase {
 
     enum DataPreset {

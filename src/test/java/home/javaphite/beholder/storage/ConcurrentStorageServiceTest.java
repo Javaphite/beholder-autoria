@@ -1,9 +1,10 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.storage;
 
-import home.javaphite.testing.LoggedTestCase;
-import home.javaphite.testing.TernaryFunction;
-import home.javaphite.testing.TestScenario;
-import home.javaphite.testing.UnaryFunction;
+import home.javaphite.beholder.storage.accessors.Accessor;
+import home.javaphite.beholder.test.utils.log.LoggedTestCase;
+import home.javaphite.beholder.test.utils.scenario.TernaryFunction;
+import home.javaphite.beholder.test.utils.scenario.TestScenario;
+import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.ForkJoinTask;
 
 class ConcurrentStorageServiceTest extends LoggedTestCase {
     @RepeatedTest(100)
-    void queue_ThreadSafetyCheck() {
+    void queueThreadSafetyCheck() {
         Set<Integer> firstData = new HashSet<>();
         Set<Integer> secondData = new HashSet<>();
         firstData.add(100);
@@ -53,7 +54,7 @@ class ConcurrentStorageServiceTest extends LoggedTestCase {
         Set<Integer> expectedStorageState = new HashSet<>();
         expectedStorageState.add(100);
         expectedStorageState.add(200);
-        Accessor<Integer> accessor = i -> storage.add(i);
+        Accessor<Integer> accessor = storage::add;
 
         service.setStorageAccessor(accessor);
         service.queue(100);

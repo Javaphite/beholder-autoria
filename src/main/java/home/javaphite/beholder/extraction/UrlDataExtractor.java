@@ -1,5 +1,8 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.extraction;
 
+import home.javaphite.beholder.data.DataSchema;
+import home.javaphite.beholder.storage.StorageService;
+import home.javaphite.beholder.load.LoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
+public abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
     static final Logger logger = LoggerFactory.getLogger(UrlDataExtractor.class);
 
     DataSchema dataSchema;
@@ -19,19 +22,20 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
     StorageService<Map<String, Object>> storageService;
 
     UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters) {
-        this.dataSchema=dataSchema;
-        this.sourceUrl=sourceUrl;
-        this.filters=new ArrayList<>(filters);
+        this.dataSchema = dataSchema;
+        this.sourceUrl = sourceUrl;
+        this.filters = new ArrayList<>(filters);
     }
 
     String applyFilters(String unfilteredString) {
-        String resultingString=unfilteredString;
-        for (UnaryOperator<String> filter:filters) resultingString=filter.apply(resultingString);
-
+        String resultingString = unfilteredString;
+        for (UnaryOperator<String> filter:filters) {
+            resultingString = filter.apply(resultingString);
+        }
         return resultingString;
     }
 
-    void extractAndSend() {
+    public void extractAndSend() {
         String uploadedText = loadService.getContent(sourceUrl);
         String filteredText = applyFilters(uploadedText);
         Set<Map<String, Object>> dataLines = extract(filteredText);
@@ -41,11 +45,11 @@ abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Obj
         }
     }
 
-    void setStorageService(StorageService<Map<String, Object>> storageService) {
+    public void setStorageService(StorageService<Map<String, Object>> storageService) {
         this.storageService = storageService;
     }
 
-    void setLoadService(LoadService<String> loadService) {
+    public void setLoadService(LoadService<String> loadService) {
         this.loadService = loadService;
     }
 }

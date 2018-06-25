@@ -1,4 +1,4 @@
-package home.javaphite.testing;
+package home.javaphite.beholder.test.utils.scenario;
 
 
 /**

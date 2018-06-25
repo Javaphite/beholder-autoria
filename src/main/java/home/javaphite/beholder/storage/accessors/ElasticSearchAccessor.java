@@ -1,4 +1,4 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.storage.accessors;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
@@ -23,33 +23,28 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
     private String documentType;
     private String idFieldPattern;
 
-    ElasticSearchAccessor(String host, int port, String protocol, String index, String docType) {
+    public ElasticSearchAccessor(String host, int port, String protocol, String index, String docType, String idFieldPattern) {
         RestClientBuilder builder = RestClient.builder( new HttpHost(host, port, protocol));
-        client = new RestHighLevelClient(builder);
+        this.client = new RestHighLevelClient(builder);
         this.index = index;
-        documentType = docType;
+        this.documentType = docType;
+        this.idFieldPattern = idFieldPattern;
     }
 
-    ElasticSearchAccessor(RestHighLevelClient client, String index, String docType) {
+    public ElasticSearchAccessor(RestHighLevelClient client, String index, String docType, String idFieldPattern) {
         this.client = client;
         this.index = index;
         documentType = docType;
+        this.idFieldPattern = idFieldPattern;
     }
 
     @Override
     public void push(Map<String, Object> data) {
         String documentId = Objects.toString( data.containsKey(idFieldPattern) ? data.get(idFieldPattern) : data.hashCode() );
         IndexRequest request = new IndexRequest(index, documentType, documentId);
-        String operation = /*exists(documentId) ? "update" :*/"create";
-        request.opType(operation);
         request.source(data);
 
         makeIndexRequest(request);
-    }
-
-    public void push(Map<String, Object> data, String idFieldPattern) {
-        setIdFieldPattern(idFieldPattern);
-        push(data);
     }
 
     private boolean exists(String id) {
@@ -78,10 +73,6 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
             throw new RuntimeException(ioe);
         }
         return response;
-    }
-
-    private void setIdFieldPattern(String idField) {
-        idFieldPattern = idField;
     }
 
 }

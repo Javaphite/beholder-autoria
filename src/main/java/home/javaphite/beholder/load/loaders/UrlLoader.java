@@ -1,4 +1,4 @@
-package home.javaphite.beholder;
+package home.javaphite.beholder.load.loaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,24 +10,23 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-class UrlLoader implements Loader<String> {
+public class UrlLoader implements Loader<String> {
     private static final Logger logger = LoggerFactory.getLogger(UrlLoader.class);
 
     private URL url;
     private URLConnection connection;
 
-    UrlLoader(String link) {
+    public UrlLoader(String link) {
         setUrl(link);
         setupConnection();
     }
 
+    @Override
     public String load() {
         String result;
 
-        try ( InputStream inStream = connection.getInputStream() ) {
-            Scanner scanner = new Scanner(inStream);
+        try ( Scanner scanner = new Scanner(connection.getInputStream()) ) {
             StringBuilder stringBuilder = new StringBuilder();
-
             scanner.useDelimiter("(?m)$"); //matches position after end of each line (multi-line mode)
             while (scanner.hasNext()) {
                 stringBuilder.append(scanner.next());

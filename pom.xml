@@ -7,22 +7,12 @@
     <version>0.0.1</version>
     <name>beholder-ms</name>
 
-    <repositories>
-        <!-- LUCENE SNAPSHOT FOR ELASTICSEARCH-->
-        <repository>
-            <id>elastic-lucene-snapshots</id>
-            <name>Elastic Lucene Snapshots</name>
-            <url>http://s3.amazonaws.com/download.elasticsearch.org/lucenesnapshots/00142c9</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-    </repositories>
-
     <properties>
         <spring.version>5.0.5.RELEASE</spring.version>
         <jackson.version>2.9.5</jackson.version>
         <guava.version>23.0</guava.version>
-        <elasticsearch.hl-api.version>6.3.0</elasticsearch.hl-api.version>>
+        <lucene.version>7.3.1</lucene.version>
+        <elasticsearch.version>6.3.0</elasticsearch.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
@@ -75,7 +65,7 @@
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${elasticsearch.hl-api.version}</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
 
         <!-- JUNIT -->
@@ -126,6 +116,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- ELASTICSEARCH+LUCENE TEST FRAMEWORK
+        (for tests and demo, DO NOT limit to test scope) -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-test-framework</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.test</groupId>
+            <artifactId>framework</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -143,7 +147,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>
                     </includes>
                 </configuration>
             </plugin>
