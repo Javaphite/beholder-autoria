@@ -75,12 +75,21 @@
             <version>${junit.platform.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
@@ -117,7 +126,7 @@
         </dependency>
 
         <!-- ELASTICSEARCH+LUCENE TEST FRAMEWORK
-        (for tests and demo, DO NOT limit to test scope) -->
+        (for tests and demo, DO NOT limit to test scope)
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-test-framework</artifactId>
@@ -128,29 +137,47 @@
             <groupId>org.elasticsearch.test</groupId>
             <artifactId>framework</artifactId>
             <version>${elasticsearch.version}</version>
-        </dependency>
-
-
+        </dependency> -->
     </dependencies>
 
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
-            <plugin>
+
+           <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit.platform.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit.jupiter.version}</version>
+                    </dependency>
+                </dependencies>
+
                 <configuration>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
