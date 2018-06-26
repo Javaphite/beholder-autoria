@@ -45,7 +45,7 @@ public final class DataSchema {
         Iterator<String> iterator = fields.keySet().iterator();
         iterator.forEachRemaining(field -> dataBlank.put(field, null));
 
-        LOG.debug("Created new blank for DataSchema {} - {}", this, dataBlank);
+        LOG.debug("Created new blank of schema {} - {}", this, dataBlank);
         return dataBlank;
     }
 

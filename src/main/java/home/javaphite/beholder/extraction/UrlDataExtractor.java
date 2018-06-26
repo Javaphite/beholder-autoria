@@ -15,10 +15,10 @@ import java.util.function.UnaryOperator;
 public abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
     static final Logger logger = LoggerFactory.getLogger(UrlDataExtractor.class);
 
-    DataSchema dataSchema;
+    private DataSchema dataSchema;
     private String sourceUrl;
     private List<UnaryOperator<String>> filters;
-    LoadService<String> loadService;
+    private LoadService<String> loadService;
     StorageService<Map<String, Object>> storageService;
 
     UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters) {

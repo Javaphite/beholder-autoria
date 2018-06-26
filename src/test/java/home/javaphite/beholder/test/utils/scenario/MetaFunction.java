@@ -11,20 +11,17 @@ package home.javaphite.beholder.test.utils.scenario;
  */
 public interface MetaFunction<R> {
     default <X> R apply(X value) {
-        R result = null;
-        result = ((UnaryFunction<X, R>) this).applyForParameters(value);
+        R result = ((UnaryFunction<X, R>) this).applyForParameters(value);
         return result;
     }
 
     default <X, Y> R apply(X xValue, Y yValue) {
-        R result = null;
-        result = ((BinaryFunction<X, Y, R>) this).applyForParameters(xValue, yValue);
+        R result = ((BinaryFunction<X, Y, R>) this).applyForParameters(xValue, yValue);
         return result;
     }
 
     default <X, Y, Z> R apply(X xValue, Y yValue, Z zValue) {
-        R result = null;
-        result = ((TernaryFunction<X, Y, Z, R>) this).applyForParameters(xValue, yValue, zValue);
+        R result = ((TernaryFunction<X, Y, Z, R>) this).applyForParameters(xValue, yValue, zValue);
         return result;
     }
 }
