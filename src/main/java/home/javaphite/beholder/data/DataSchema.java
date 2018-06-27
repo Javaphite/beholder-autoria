@@ -1,6 +1,5 @@
 package home.javaphite.beholder.data;
 
-import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,20 +91,5 @@ public final class DataSchema {
     @Override
     public String toString() {
         return fields.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if (null == obj || getClass() != obj.getClass()) { return false; }
-
-        DataSchema schema = (DataSchema) obj;
-        return Objects.equal(fields, schema.fields);
-    }
-
-    @Override
-    public int hashCode() {
-        int hashcode = Objects.hashCode(fields);
-        return hashcode;
     }
 }
