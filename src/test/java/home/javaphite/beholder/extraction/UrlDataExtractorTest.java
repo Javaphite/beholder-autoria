@@ -2,9 +2,9 @@ package home.javaphite.beholder.extraction;
 
 import home.javaphite.beholder.storage.StorageService;
 import home.javaphite.beholder.load.LoadService;
-import home.javaphite.beholder.test.utils.scenario.BinaryFunction;
-import home.javaphite.beholder.test.utils.log.LoggedTestCase;
-import home.javaphite.beholder.test.utils.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.scenario.BinaryFunction;
+import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
+import home.javaphite.beholder.test.tools.scenario.TestScenario;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 
 @Tag("home.javaphite.beholder.extraction.UrlDataExtractor")
-class UrlDataExtractorTest extends LoggedTestCase {
+class UrlDataExtractorTest extends TestLifecycleLogger {
     @Test
     void applyFilters_MustReturnStringTransformedWithAllFilters() {
         String htmlDocSample ="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
@@ -50,8 +50,6 @@ class UrlDataExtractorTest extends LoggedTestCase {
                 .when("UrlDataExtractor's filters applied to text", action)
                 .then("Resulting string must be: {@}", expectedResult)
                 .perform();
-
-        countAsPassed();
     }
 
     @Test
@@ -70,8 +68,6 @@ class UrlDataExtractorTest extends LoggedTestCase {
                 .when("UrlDataExtractor's extractAndSend method called AND we peek last element in <DataAccessor's> queue", action)
                 .then("Returned element must be: {@}", expectedResult)
                 .perform();
-
-        countAsPassed();
     }
 
     private Map<String, Object> getDataStub() {

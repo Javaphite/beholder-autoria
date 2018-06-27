@@ -1,10 +1,10 @@
 package home.javaphite.beholder.storage;
 
 import home.javaphite.beholder.storage.accessors.Accessor;
-import home.javaphite.beholder.test.utils.log.LoggedTestCase;
-import home.javaphite.beholder.test.utils.scenario.TernaryFunction;
-import home.javaphite.beholder.test.utils.scenario.TestScenario;
-import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
+import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
+import home.javaphite.beholder.test.tools.scenario.TernaryFunction;
+import home.javaphite.beholder.test.tools.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
-class ConcurrentStorageServiceTest extends LoggedTestCase {
+class ConcurrentStorageServiceTest extends TestLifecycleLogger {
     @RepeatedTest(100)
     void queueThreadSafetyCheck() {
         Set<Integer> firstData = new HashSet<>();
@@ -43,9 +43,7 @@ class ConcurrentStorageServiceTest extends LoggedTestCase {
                 .when("Threads queue data to storage service concurrently", action)
                 .then("Service's queue must contain non-corrupted data from both threads", true)
                 .perform();
-
-        countAsPassed();
-    }
+     }
 
     @Test
     void store_SendDataForwardUsingItsAccessor() {
@@ -67,8 +65,6 @@ class ConcurrentStorageServiceTest extends LoggedTestCase {
                 .when("Try to store data {} queued in service", action, service.storageQueue)
                 .then("Storage must contain all data from queue: {@}", expectedStorageState)
                 .perform();
-
-        countAsPassed();
     }
 
     private <T> Runnable getDataQueuer(StorageService<T> service, Set<T> data) {
@@ -76,7 +72,7 @@ class ConcurrentStorageServiceTest extends LoggedTestCase {
     }
 
     private <T> boolean checkEffectivelyEqual(Queue<T> q1, Queue<T> q2) {
-        logger.debug("First queue: {}, second queue: {}", q1, q2);
+        LOG.debug("First queue: {}, second queue: {}", q1, q2);
 
         boolean result = false;
         if (q1==null || q2==null) return false;

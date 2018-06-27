@@ -8,14 +8,14 @@
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
 
      <discriminator>
-        <key>className</key>
+        <key>tags</key>
         <defaultValue>unknown</defaultValue>
      </discriminator>
 
         <sift>
-            <appender name="FILE-${className}"
+            <appender name="FILE-${tags}"
                       class="ch.qos.logback.core.FileAppender">
-                <file>${PROJECT_LOG_DIR}\${TEST_DIR}\${className}\${timestamp}.log</file>
+                <file>${PROJECT_LOG_DIR}\${TEST_DIR}\${tags}\${timestamp}.log</file>
                   <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
                     <pattern> %d{HH:mm:ss.SSS} [%thread] %level - %msg%n </pattern>
                 </encoder>
@@ -30,24 +30,20 @@
         </encoder>
     </appender>
 
-<!-- Wire log levels and appenders-->
-    <!-- Set all levels to be seen by default -->
-    <root level="trace">
-        <appender-ref ref="SIFT" />
-        <appender-ref ref="STDOUT" />
-    </root>
 <!-- Loggers configurations -->
-    <!-- Console + file per test case logger-->
+    <root level="INFO">
+        <appender-ref ref="SIFT"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <!-- Console + file per test case LOG-->
     <logger name="testLogger" additivity="false">
-    <appender-ref ref="SIFT" />
-    <appender-ref ref="STDOUT" />
+        <appender-ref ref="SIFT"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
-    <!-- Console only logger -->
-    <logger name="consoleLogger" additivity="false">
-        <appender-ref ref="STDOUT" />
+    <!-- Console only LOG -->
+    <logger name="consoleLogger" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
     </logger>
-
-
 
 </configuration>
 

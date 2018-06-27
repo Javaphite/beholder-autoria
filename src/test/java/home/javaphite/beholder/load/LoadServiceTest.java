@@ -2,16 +2,21 @@ package home.javaphite.beholder.load;
 
 import home.javaphite.beholder.load.loaders.Loader;
 import home.javaphite.beholder.load.loaders.UrlLoader;
-import home.javaphite.beholder.test.utils.log.LoggedTestCase;
-import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
-import home.javaphite.beholder.test.utils.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
+import home.javaphite.beholder.test.tools.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-class LoadServiceTest extends LoggedTestCase {
+@Tag("home.javaphite.beholder.load.LoadService")
+class LoadServiceTest extends TestLifecycleLogger {
     @Test
-    void getContent_MustReturnContentOfSourceByLink() {
+    @Tag("getContent")
+    void returnContentOfSourceByLink() {
         String testLine = "CONTENT";
         LoadService<String> service = new LoadService<>();
         LoaderResolver<String> resolver = mock(LoaderResolver.class);
@@ -27,7 +32,5 @@ class LoadServiceTest extends LoggedTestCase {
                 .when("Try to getContent for some link", action)
                 .then("It must return string: {@}", testLine)
                 .perform();
-
-        countAsPassed();
     }
 }

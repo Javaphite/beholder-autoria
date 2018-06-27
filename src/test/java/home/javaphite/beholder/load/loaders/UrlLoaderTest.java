@@ -1,8 +1,8 @@
 package home.javaphite.beholder.load.loaders;
 
-import home.javaphite.beholder.test.utils.log.LoggedTestCase;
-import home.javaphite.beholder.test.utils.scenario.UnaryFunction;
-import home.javaphite.beholder.test.utils.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
+import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
+import home.javaphite.beholder.test.tools.scenario.TestScenario;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;
@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.net.MalformedURLException;
 
 
-class UrlLoaderTest extends LoggedTestCase {
+class UrlLoaderTest extends TestLifecycleLogger {
 
     @Test
     void loadMethod_BehaviourTest() {
@@ -28,7 +28,6 @@ class UrlLoaderTest extends LoggedTestCase {
                 .perform();
 
         file.deleteOnExit();
-        countAsPassed();
     }
 
     private File createTestFile(String text) {
@@ -42,7 +41,7 @@ class UrlLoaderTest extends LoggedTestCase {
             writer.close();
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
+            LOG.error(e.getMessage());
         }
 
         return newTempFile;
@@ -54,7 +53,7 @@ class UrlLoaderTest extends LoggedTestCase {
         try {
             fileUrl = file.toURI().toURL().toString();
         } catch (MalformedURLException urlException) {
-            logger.error(urlException.getMessage());
+            LOG.error(urlException.getMessage());
         }
         return fileUrl;
     }
