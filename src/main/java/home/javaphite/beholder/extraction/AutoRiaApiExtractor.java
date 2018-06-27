@@ -73,7 +73,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
             jsonTree = mapper.readTree(jsonString);
         }
         catch (IOException jsonReadingError) {
-            logger.error("JSON reading error: ", jsonReadingError);
+            LOG.error("JSON reading error: ", jsonReadingError);
             throw new DataBindingException(jsonReadingError);
         }
 
