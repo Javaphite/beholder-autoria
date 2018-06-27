@@ -7,7 +7,6 @@ import home.javaphite.beholder.data.DataSchema;
 import javax.xml.bind.DataBindingException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
     private String orderInfoRequestTemplate;
 
     public AutoRiaApiExtractor(DataSchema schema, String searchRequest, String orderInfoRequestTemplate) {
-        super(schema, searchRequest, Collections.emptyList());
+        super(schema, searchRequest);
         this.orderInfoRequestTemplate = orderInfoRequestTemplate;
     }
 

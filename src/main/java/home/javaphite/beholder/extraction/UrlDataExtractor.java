@@ -6,30 +6,30 @@ import home.javaphite.beholder.load.LoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-public abstract class UrlDataExtractor implements DataExtractor<String, Map<String, Object>> {
-    static final Logger logger = LoggerFactory.getLogger(UrlDataExtractor.class);
-
-    private DataSchema dataSchema;
+abstract class UrlDataExtractor {
+    static final Logger LOG = LoggerFactory.getLogger(UrlDataExtractor.class);
     private String sourceUrl;
-    private List<UnaryOperator<String>> filters;
-    private LoadService<String> loadService;
+    private List<UnaryOperator<String>> filters = new LinkedList<>();
+    DataSchema dataSchema;
+    LoadService<String> loadService;
     StorageService<Map<String, Object>> storageService;
 
-    UrlDataExtractor(DataSchema dataSchema, String sourceUrl, List<UnaryOperator<String>> filters) {
+    UrlDataExtractor(DataSchema dataSchema, String sourceUrl) {
         this.dataSchema = dataSchema;
         this.sourceUrl = sourceUrl;
-        this.filters = new ArrayList<>(filters);
     }
+
+    abstract Set<Map<String, Object>> extract(String source);
 
     String applyFilters(String unfilteredString) {
         String resultingString = unfilteredString;
-        for (UnaryOperator<String> filter:filters) {
+        for (UnaryOperator<String> filter: filters) {
             resultingString = filter.apply(resultingString);
         }
         return resultingString;
@@ -39,10 +39,12 @@ public abstract class UrlDataExtractor implements DataExtractor<String, Map<Stri
         String uploadedText = loadService.getContent(sourceUrl);
         String filteredText = applyFilters(uploadedText);
         Set<Map<String, Object>> dataLines = extract(filteredText);
+        dataLines.forEach(storageService::queue);
+    }
 
-        for (Map<String, Object> line : dataLines) {
-            storageService.queue(line);
-        }
+    public void addFilter(UnaryOperator<String> filter) {
+        LOG.debug("Add new filter to {}", this);
+        filters.add(filter);
     }
 
     public void setStorageService(StorageService<Map<String, Object>> storageService) {
