@@ -14,15 +14,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+/**
+ * Simple test lifecycle logger based on JUnit 5 annotations and extension model.
+ * Provides basic logging for its subclasses.
+*/
+
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(TestLifecycleLogger.class)
-public class TestLifecycleLogger implements TestExecutionExceptionHandler {
+public abstract class TestLifecycleLogger implements TestExecutionExceptionHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(TestLifecycleLogger.class);
     private int testsOverall;
     private int testsFailed;
 
     @Override
     public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
+        LOG.debug("Exception thrown during test execution: ", throwable);
+
         if (throwable instanceof AssertionError) {
             testsFailed++;
         }
