@@ -1,4 +1,4 @@
-package home.javaphite.beholder.test.utils.scenario;
+package home.javaphite.beholder.test.tools.scenario;
 
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public final class TestScenario {
     public <T> TestScenario given(String description, T given, Object...infoValues)
             throws IllegalArgumentException {
         givenDescriptions.add(fillPlaceholders(description, given, infoValues));
-        this.givens.add(given);
+        givens.add(given);
         return this;
     }
 
@@ -45,7 +45,7 @@ public final class TestScenario {
     }
 
     public void perform() throws AssertionError {
-        Object result = null;
+        Object result;
 
         switch (givens.size()) {
             case 1: result = when.apply(givens.get(0)); break;
@@ -59,7 +59,7 @@ public final class TestScenario {
     }
 
     private void check(Object result){
-        logger.info("TEST DESCRIPTION: {}", this.toString());
+        logger.info("TEST DESCRIPTION: {}", this);
 
         try {
             logger.info("RESULT: {}", Objects.toString(result));
