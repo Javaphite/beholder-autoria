@@ -5,7 +5,9 @@ import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
 import home.javaphite.beholder.test.tools.scenario.TernaryFunction;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
 import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
+@DisplayName("ConcurrentStorageService")
 class ConcurrentStorageServiceTest extends TestLifecycleLogger {
     @RepeatedTest(100)
     void queueThreadSafetyCheck() {

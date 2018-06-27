@@ -4,6 +4,7 @@ import home.javaphite.beholder.test.tools.scenario.BinaryFunction;
 import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
 import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-@Tag("home.javaphite.beholder.data.DataSchema")
+@DisplayName("DataSchema")
 class DataSchemaTest extends TestLifecycleLogger {
     @Test
     @Tag("createDataBlank")

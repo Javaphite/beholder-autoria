@@ -5,6 +5,7 @@ import home.javaphite.beholder.load.loaders.UrlLoader;
 import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
 import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Tag("home.javaphite.beholder.load.LoadService")
+@DisplayName("LoadService")
 class LoadServiceTest extends TestLifecycleLogger {
     @Test
     @Tag("getContent")

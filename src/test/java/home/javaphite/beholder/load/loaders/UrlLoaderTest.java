@@ -3,6 +3,8 @@ package home.javaphite.beholder.load.loaders;
 import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
 import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;
@@ -10,7 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.MalformedURLException;
 
-
+@DisplayName("UrlLoader")
 class UrlLoaderTest extends TestLifecycleLogger {
 
     @Test

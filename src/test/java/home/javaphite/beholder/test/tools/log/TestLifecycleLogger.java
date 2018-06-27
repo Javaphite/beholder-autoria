@@ -21,7 +21,7 @@ import org.slf4j.MDC;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(TestLifecycleLogger.class)
-public abstract class TestLifecycleLogger implements TestExecutionExceptionHandler {
+public class TestLifecycleLogger implements TestExecutionExceptionHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(TestLifecycleLogger.class);
     private int testsOverall;
     private int testsFailed;
@@ -37,16 +37,16 @@ public abstract class TestLifecycleLogger implements TestExecutionExceptionHandl
 
     @BeforeAll
     static void initAll(TestInfo testInfo) {
-        // Add tested class tags string to logging context
-        String tags = testInfo.getTags().toString();
-        MDC.put("tags", tags);
-        LOG.info("Testing {}", tags);
+        // Add tested class name to logging context
+        String className = testInfo.getDisplayName();
+        MDC.put("className", className);
+        LOG.info("Testing {}", className);
     }
 
     @BeforeEach
     void initEach(TestInfo testInfo) {
-        String testName = testInfo.getTags() + " " + testInfo.getDisplayName();
-        LOG.info("Starting test {}", testName);
+        String methodName = testInfo.getTags() + " " + testInfo.getDisplayName();
+        LOG.info("Starting test {}", methodName);
     }
 
     @AfterEach
@@ -58,10 +58,10 @@ public abstract class TestLifecycleLogger implements TestExecutionExceptionHandl
     void tearDownAll() {
         int testsPassed = testsOverall-testsFailed;
         String result = (testsPassed == testsOverall)? "SUCCESS": "FAIL";
-        LOG.info("Result of {} tests: {}/{} passed - {}", MDC.get("tags"), testsPassed, testsOverall, result);
+        LOG.info("Result of {} tests: {}/{} passed - {}", MDC.get("className"), testsPassed, testsOverall, result);
 
         // Clear logging context
-        MDC.remove("tags");
+        MDC.remove("className");
     }
 }
 

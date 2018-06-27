@@ -5,40 +5,35 @@ import home.javaphite.beholder.load.LoadService;
 import home.javaphite.beholder.test.tools.scenario.BinaryFunction;
 import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 
-@Tag("home.javaphite.beholder.extraction.UrlDataExtractor")
+@DisplayName("UrlDataExtractor")
 class UrlDataExtractorTest extends TestLifecycleLogger {
     @Test
     void applyFilters_MustReturnStringTransformedWithAllFilters() {
         String htmlDocSample ="<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Title of the document</title>" +
                                 "</head><body>Content of the document......</body></html>";
 
-        List<UnaryOperator<String>> filters = new ArrayList<>();
         String htmlTagsPattern="<\\\\?[^<]+>";
         String punctuationCharsPattern="[. !?,]";
-        filters.add(input->input.replaceAll(htmlTagsPattern,""));
-        filters.add(input->input.replaceAll(punctuationCharsPattern,""));
-        filters.add(String::toLowerCase);
 
-        UrlDataExtractor extractor = new UrlDataExtractor(null, null, filters) {
+        UrlDataExtractor extractor = new UrlDataExtractor(null, null) {
             @Override
-           public Set<Map<String, Object>> extract(String dataInDelimitedString) {
+           public Set<Map<String, Object>> extract(String source) {
                 return null;
             }
         };
+        extractor.addFilter(input->input.replaceAll(htmlTagsPattern,""));
+        extractor.addFilter(input->input.replaceAll(punctuationCharsPattern,""));
+        extractor.addFilter(String::toLowerCase);
 
         BinaryFunction<UrlDataExtractor, String, String> action = UrlDataExtractor::applyFilters;
         String expectedResult="titleofthedocumentcontentofthedocument";
@@ -84,7 +79,7 @@ class UrlDataExtractorTest extends TestLifecycleLogger {
     private UrlDataExtractor getCustomExtractor() {
         Map<String, Object> dataStub = getDataStub();
 
-        UrlDataExtractor customExtractor = new UrlDataExtractor(null, null, Collections.emptyList()) {
+        UrlDataExtractor customExtractor = new UrlDataExtractor(null, null) {
             @Override
             public Set<Map<String, Object>> extract(String dataInString) {
                 Set<Map<String, Object>> dataLines = new HashSet<>();

@@ -8,14 +8,14 @@
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
 
      <discriminator>
-        <key>tags</key>
+        <key>className</key>
         <defaultValue>unknown</defaultValue>
      </discriminator>
 
         <sift>
-            <appender name="FILE-${tags}"
+            <appender name="FILE-${className}"
                       class="ch.qos.logback.core.FileAppender">
-                <file>${PROJECT_LOG_DIR}\${TEST_DIR}\${tags}\${timestamp}.log</file>
+                <file>${PROJECT_LOG_DIR}\${TEST_DIR}\${className}\${timestamp}.log</file>
                   <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
                     <pattern> %d{HH:mm:ss.SSS} [%thread] %level - %msg%n </pattern>
                 </encoder>
