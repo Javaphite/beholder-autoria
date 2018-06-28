@@ -5,8 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
@@ -15,24 +13,23 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
- * Simple test lifecycle logger based on JUnit 5 annotations and extension model.
+ * Simple test lifecycle logger based on JUnit 5 lifecycle and extension model.
  * Provides basic logging for its subclasses.
 */
 
-@TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(TestLifecycleLogger.class)
 public class TestLifecycleLogger implements TestExecutionExceptionHandler {
     protected static final Logger LOG = LoggerFactory.getLogger(TestLifecycleLogger.class);
-    private int testsOverall;
-    private int testsFailed;
+    private static int testsOverall;
+    private static int testsFailed;
 
     @Override
     public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
         LOG.debug("Exception thrown during test execution: ", throwable);
-
         if (throwable instanceof AssertionError) {
             testsFailed++;
         }
+        throw throwable;
     }
 
     @BeforeAll
@@ -55,13 +52,16 @@ public class TestLifecycleLogger implements TestExecutionExceptionHandler {
     }
 
     @AfterAll
-    void tearDownAll() {
+    static void tearDownAll() {
         int testsPassed = testsOverall-testsFailed;
         String result = (testsPassed == testsOverall)? "SUCCESS": "FAIL";
         LOG.info("Result of {} tests: {}/{} passed - {}", MDC.get("className"), testsPassed, testsOverall, result);
 
         // Clear logging context
         MDC.remove("className");
+        // Reset counters
+        testsOverall=0;
+        testsFailed=0;
     }
 }
 
