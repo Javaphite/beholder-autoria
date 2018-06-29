@@ -17,7 +17,7 @@ class UrlDataExtractorTest extends TestLifecycleLogger {
     void returnsStringTransformedWithAllFilters() {
         String unfilteredText ="123_[TeXt]..";
         String filteredText ="text";
-        UrlDataExtractor extractor = getTestExtractor();
+        UrlDataExtractor extractor = new TestExtractor();
         // Replaces all digits and punctuation signs
         extractor.addFilter(input->input.replaceAll("[0-9]?\\p{Punct}?",""));
         extractor.addFilter(String::toLowerCase);
@@ -31,13 +31,14 @@ class UrlDataExtractorTest extends TestLifecycleLogger {
                 .perform();
     }
 
-    private UrlDataExtractor getTestExtractor() {
-        UrlDataExtractor customExtractor = new UrlDataExtractor(null, null) {
-            @Override
-            public Set<Map<String, Object>> extract(String source) {
-                return null;
-            }
-        };
-        return customExtractor;
+    private static class TestExtractor extends UrlDataExtractor {
+        TestExtractor() {
+            super(null, null);
+        }
+
+        @Override
+        public Set<Map<String, Object>> extract(String source) {
+            return null;
+        }
     }
 }
