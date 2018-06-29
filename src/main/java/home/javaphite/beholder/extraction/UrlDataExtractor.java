@@ -17,7 +17,7 @@ abstract class UrlDataExtractor {
     private String sourceUrl;
     private List<UnaryOperator<String>> filters = new LinkedList<>();
     DataSchema dataSchema;
-    LoadService<String> loadService;
+    LoadService loadService;
     StorageService storageService;
 
     UrlDataExtractor(DataSchema dataSchema, String sourceUrl) {
@@ -43,7 +43,7 @@ abstract class UrlDataExtractor {
      */
     public void extractFromSource() {
         LOG.info("Getting content of {}", sourceUrl);
-        String uploadedText = loadService.getContent(sourceUrl);
+        String uploadedText = loadService.loadContent(sourceUrl);
         String filteredText = applyFilters(uploadedText);
         Set<Map<String, Object>> dataLines = extract(filteredText);
         dataLines.forEach(storageService::queue);
@@ -58,7 +58,7 @@ abstract class UrlDataExtractor {
         this.storageService = storageService;
     }
 
-    public void setLoadService(LoadService<String> loadService) {
+    public void setLoadService(LoadService loadService) {
         this.loadService = loadService;
     }
 }

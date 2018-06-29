@@ -40,7 +40,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
 
         for (String id : orderIds) {
             String infoRequest = orderInfoRequestTemplate + id;
-            String orderInfo = loadService.getContent(infoRequest);
+            String orderInfo = loadService.loadContent(infoRequest);
             orders.add(orderInfo);
         }
 

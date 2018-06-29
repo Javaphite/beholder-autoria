@@ -4,13 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-public class UrlLoader implements Loader<String> {
+public class UrlLoader{
     private static final Logger logger = LoggerFactory.getLogger(UrlLoader.class);
 
     private URL url;
@@ -21,7 +20,6 @@ public class UrlLoader implements Loader<String> {
         setupConnection();
     }
 
-    @Override
     public String load() {
         String result;
 

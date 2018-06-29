@@ -12,16 +12,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.MalformedURLException;
 
+//TODO: rework this shit with Mockito and avoid temp files
 @DisplayName("UrlLoader")
 class UrlLoaderTest extends TestLifecycleLogger {
-
     @Test
-    void loadMethod_BehaviourTest() {
+    @Tag("load")
+    void behaviourTest() {
         String text = "HEADER LINE" + System.lineSeparator() + "Another line";
         File file = createTestFile(text);
         String filePath = getFileUrl(file);
-        Loader<String> loader = new UrlLoader(filePath);
-        UnaryFunction<Loader<String>, String> action = Loader::load;
+        UrlLoader loader = new UrlLoader(filePath);
+        UnaryFunction<UrlLoader, String> action = UrlLoader::load;
 
         TestScenario scenario = new TestScenario();
         scenario.given("UrlLoader linked with file {}", loader, filePath)
