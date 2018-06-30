@@ -1,8 +1,8 @@
 package home.javaphite.beholder.load.loaders;
 
 import home.javaphite.beholder.test.tools.log.TestLifecycleLogger;
-import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
 import home.javaphite.beholder.test.tools.scenario.TestScenario;
+import home.javaphite.beholder.test.tools.scenario.UnaryFunction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,14 +10,16 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
-//TODO: rework this shit with Mockito and avoid temp files
 @DisplayName("UrlLoader")
 class UrlLoaderTest extends TestLifecycleLogger {
     @Test
     @Tag("load")
-    void behaviourTest() {
+    void returnsFileContentWithoutChangesByURL() {
         String text = "HEADER LINE" + System.lineSeparator() + "Another line";
         File file = createTestFile(text);
         String filePath = getFileUrl(file);
@@ -29,35 +31,34 @@ class UrlLoaderTest extends TestLifecycleLogger {
                 .when("Try to load content of file using the loader", action)
                 .then("It must return: {@}", text)
                 .perform();
-
-        file.deleteOnExit();
     }
 
+    /* Creates new temporary file in system temp directory
+     and sets it to be deleted on program exit */
     private File createTestFile(String text) {
-        File newTempFile = null;
-
         try {
-            newTempFile = File.createTempFile("test_file_", ".tmp");
-            BufferedWriter writer = new BufferedWriter(new FileWriter(newTempFile));
-            writer.append(text);
-            writer.flush();
-            writer.close();
+            File newTempFile = File.createTempFile("test_file_", ".tmp");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(newTempFile))) {
+                writer.append(text);
+                writer.flush();
+                writer.close();
+            }
+            newTempFile.deleteOnExit();
+            return newTempFile;
         }
-        catch (Exception e) {
-            LOG.error(e.getMessage());
+        catch (IOException fileIoException) {
+            LOG.error(fileIoException.getMessage());
+            throw new UncheckedIOException(fileIoException);
         }
-
-        return newTempFile;
     }
 
     private String getFileUrl(File file) {
-        String fileUrl = null;
-
         try {
-            fileUrl = file.toURI().toURL().toString();
+            String fileUrl = Objects.toString(file.toURI().toURL());
+            return fileUrl;
         } catch (MalformedURLException urlException) {
             LOG.error(urlException.getMessage());
+            throw new UncheckedIOException(urlException);
         }
-        return fileUrl;
     }
 }
