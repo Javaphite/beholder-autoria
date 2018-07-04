@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-abstract class UrlDataExtractor {
+public abstract class UrlDataExtractor {
     static final Logger LOG = LoggerFactory.getLogger(UrlDataExtractor.class);
-    private String sourceUrl;
+    String sourceUrl;
     private List<UnaryOperator<String>> filters = new LinkedList<>();
     DataSchema dataSchema;
     LoadService loadService;

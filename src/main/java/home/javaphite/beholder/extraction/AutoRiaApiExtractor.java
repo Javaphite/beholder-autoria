@@ -4,78 +4,110 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import home.javaphite.beholder.data.DataSchema;
 
-import javax.xml.bind.DataBindingException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/*
-Code below uses auto.ria.com API.
-For more details please visit: https://AUTO.RIA.com, https://developers.ria.com
-*/
+/**
+ *  Extracts adverts information from <a href="https://AUTO.RIA.com">auto.ria.com</a> using its REST API. <br>
+ *  For more details please visit: <a href="https://developers.ria.com">developers.ria.com</a>
+ */
 
-// NEEDS TEST
-// NEEDS CLEANING
 public class AutoRiaApiExtractor extends UrlDataExtractor {
-    private String orderInfoRequestTemplate;
+    private static final int ADVERTS_PER_PAGE = 50;
+    static String apiKey;
 
-    public AutoRiaApiExtractor(DataSchema schema, String searchRequest, String orderInfoRequestTemplate) {
+    public AutoRiaApiExtractor(DataSchema schema, String searchRequest) {
         super(schema, searchRequest);
-        this.orderInfoRequestTemplate = orderInfoRequestTemplate;
     }
 
     @Override
     public Set<Map<String, Object>> extract(String source) {
-        List<String> orderIds = new ArrayList<>();
-        List<String> orders = new ArrayList<>();
+        List<String> ids = getIds();
+        List<JsonNode> adverts = new ArrayList<>();
+        ids.forEach(id -> adverts.add(getAdvertInfo(id)));
+
         Set<Map<String, Object>> dataEntries = new LinkedHashSet<>();
-
-        JsonNode responseTree = getJsonTree(source);
-        for (JsonNode node : responseTree.findValue("ids")) {
-            orderIds.add(node.textValue());
-        }
-
-        for (String id : orderIds) {
-            String infoRequest = orderInfoRequestTemplate + id;
-            String orderInfo = loadService.loadContent(infoRequest);
-            orders.add(orderInfo);
-        }
-
-        for (String orderInfo : orders) {
-            JsonNode orderJsonTree = getJsonTree(orderInfo);
+        for (JsonNode advert: adverts) {
             Map<String, Object> dataEntry = dataSchema.createDataBlank();
-
             for (String field : dataEntry.keySet()) {
-                JsonNode value = orderJsonTree.findValue(field);
-                dataEntry.put(field, value.asText());
+                JsonNode value = advert.findValue(field);
+                dataEntry.put(field, value.asText()); // TODO: add type caster to use here
             }
-
-            if (dataSchema.isValid(dataEntry)) {
-                dataEntries.add(dataEntry);
-            }
-            else {
-                throw new RuntimeException("Data reading error!" + dataEntry);
-            }
+            addValidIgnoreElse(dataEntries, dataEntry);
         }
-
         return dataEntries;
     }
 
-    private JsonNode getJsonTree(String jsonString) {
-        JsonNode jsonTree;
-        ObjectMapper mapper = new ObjectMapper();
+    // Returns all adverts ids relevant to search request stored in extractor's sourceUrl.
+    private List<String> getIds() {
+        List<String> ids = new ArrayList<>();
+        int pages = getLastPageIndex(ADVERTS_PER_PAGE);
+        for (int i=0; i<=pages; i++) {
+            ids.addAll(getIdsFromPage(i));
+        }
+        return ids;
+    }
 
+    // Returns adverts ids from particular page of search request.
+    private List<String> getIdsFromPage(int pageIndex) {
+        String pageRequest = sourceUrl + "&page=" + pageIndex;
+        String pageResponse = loadService.loadContent(pageRequest);
+        JsonNode responseJson = getJsonTree(pageResponse);
+        JsonNode jasonIdsArray = responseJson.findValue("ids");
+        List<String> ids = new ArrayList<>();
+        jasonIdsArray.forEach(id -> ids.add(id.textValue()));
+        return ids;
+    }
+
+    // Evaluates index of last page in search request using number of results per page as parameter.
+    private int getLastPageIndex(int actualAdsPerPage) {
+        // Construct GET request with 0 advert ids per page just to get other info for evaluations
+        String searchStatsRequest = sourceUrl + "&countpage=0";
+        String searchStatsResponse = loadService.loadContent(searchStatsRequest);
+        JsonNode jsonResponse = getJsonTree(searchStatsResponse);
+        int totalRelevantAds = jsonResponse.findValue("count").asInt();
+        return Math.floorDiv(totalRelevantAds, actualAdsPerPage);
+    }
+
+    // Retrieves advert information by id using auto.ria.com REST API
+    private JsonNode getAdvertInfo(String advertId) {
+        String infoRequest = prepareInfoRequest(advertId);
+        String infoResponse = loadService.loadContent(infoRequest);
+        return getJsonTree(infoResponse);
+    }
+
+    // Stores data in specified set if it fits to extractor's data schema, or ignores it else.
+    private void addValidIgnoreElse(Set<Map<String, Object>> dataEntries, Map<String, Object> dataEntry) {
+        if (dataSchema.isValid(dataEntry)) {
+            dataEntries.add(dataEntry);
+        }
+        else {
+            LOG.warn("Invalid data entry {} not suits to schema {} and will be IGNORED!", dataEntry, dataSchema);
+        }
+    }
+
+    // Constructs advert info GET request by id.
+    private String prepareInfoRequest(String id) {
+        String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ORDER_ID}";
+        String infoRequest = requestTemplate.replace("{API_KEY}", apiKey);
+        infoRequest = infoRequest.replace("{ORDER_ID}", id);
+        return infoRequest;
+    }
+
+    // TODO: move this to Jackson utils class
+    private JsonNode getJsonTree(String jsonString) {
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            jsonTree = mapper.readTree(jsonString);
+            return mapper.readTree(jsonString);
         }
         catch (IOException jsonReadingError) {
             LOG.error("JSON reading error: ", jsonReadingError);
-            throw new DataBindingException(jsonReadingError);
+            throw new UncheckedIOException(jsonReadingError);
         }
-
-        return jsonTree;
     }
 }
