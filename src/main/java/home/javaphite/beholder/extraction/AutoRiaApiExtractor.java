@@ -3,6 +3,8 @@ package home.javaphite.beholder.extraction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import home.javaphite.beholder.data.DataSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -18,7 +20,8 @@ import java.util.Set;
  */
 
 public class AutoRiaApiExtractor extends UrlDataExtractor {
-    private static final int ADVERTS_PER_PAGE = 50;
+    private static final Logger LOG = LoggerFactory.getLogger(AutoRiaApiExtractor.class);
+    private static final int ADVERTS_PER_PAGE = 100;
     static String apiKey;
 
     public AutoRiaApiExtractor(DataSchema schema, String searchRequest) {
@@ -27,6 +30,8 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
 
     @Override
     public Set<Map<String, Object>> extract(String source) {
+        LOG.info("Extracting adverts information for search request: {}", sourceUrl);
+        int ignored=0;
         List<String> ids = getIds();
         List<JsonNode> adverts = new ArrayList<>();
         ids.forEach(id -> adverts.add(getAdvertInfo(id)));
@@ -40,6 +45,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
             }
             addValidIgnoreElse(dataEntries, dataEntry);
         }
+        LOG.info("Adverts info extraction completed: prepared - {}, ignored - {}", dataEntries.size(), ids.size() - dataEntries.size());
         return dataEntries;
     }
 

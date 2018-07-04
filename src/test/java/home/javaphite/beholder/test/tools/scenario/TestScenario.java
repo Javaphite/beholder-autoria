@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-//TODO: add javaDocs to this class' API
 public final class TestScenario {
     private Logger logger;
 
@@ -73,8 +72,8 @@ public final class TestScenario {
     }
 
     private String fillPlaceholders(String stringWithPlaceholders, Object mainFiller, Object...secondaryFillers) {
-        String mainPlaceholderPattern="\\{@}";
-        String secondaryPlaceholderPattern="\\{}";
+        String mainPlaceholderPattern="[{]@}";
+        String secondaryPlaceholderPattern="[{]}";
         String result;
 
         try {
@@ -87,7 +86,7 @@ public final class TestScenario {
                 Object nonNullFiller = Objects.requireNonNull(secondaryFillers[i], "Null fillers not allowed, but element " + i + " is null!");
                 result = result.replaceFirst(secondaryPlaceholderPattern, nonNullFiller.toString());
             }
-        } catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             throw new IllegalArgumentException(exception);
         }
 

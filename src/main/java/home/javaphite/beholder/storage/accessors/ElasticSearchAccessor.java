@@ -1,35 +1,28 @@
 package home.javaphite.beholder.storage.accessors;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
-
+//TODO: implement toString!
 // UNDER CONSTRUCTION
 // NEEDS TEST
 // NEEDS CLEANING
 public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchAccessor.class);
     private RestHighLevelClient client;
     private String index;
     private String documentType;
     private String idFieldPattern;
-
-    public ElasticSearchAccessor(String host, int port, String protocol, String index, String docType, String idFieldPattern) {
-        RestClientBuilder builder = RestClient.builder( new HttpHost(host, port, protocol));
-        this.client = new RestHighLevelClient(builder);
-        this.index = index;
-        this.documentType = docType;
-        this.idFieldPattern = idFieldPattern;
-    }
 
     public ElasticSearchAccessor(RestHighLevelClient client, String index, String docType, String idFieldPattern) {
         this.client = client;
@@ -40,11 +33,10 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
 
     @Override
     public void push(Map<String, Object> data) {
-        String documentId = Objects.toString( data.containsKey(idFieldPattern) ? data.get(idFieldPattern) : data.hashCode() );
+        String documentId = Objects.toString(data.containsKey(idFieldPattern) ? data.get(idFieldPattern) : data.hashCode());
         IndexRequest request = new IndexRequest(index, documentType, documentId);
         request.source(data);
-
-        makeIndexRequest(request);
+        indexRequest(request);
     }
 
     private boolean exists(String id) {
@@ -64,15 +56,14 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
         return exists;
     }
 
-    private IndexResponse makeIndexRequest(IndexRequest request) {
-        IndexResponse response;
+    private void indexRequest(IndexRequest request) {
         try {
-            response = client.index(request);
+            client.index(request);
         }
-        catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+        catch (IOException indexRequestError) {
+            LOG.error("Index request error: ", indexRequestError);
+            throw new UncheckedIOException(indexRequestError);
         }
-        return response;
     }
 
 }
