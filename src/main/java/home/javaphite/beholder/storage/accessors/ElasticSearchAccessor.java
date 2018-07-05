@@ -1,10 +1,8 @@
 package home.javaphite.beholder.storage.accessors;
 
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.main.MainResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +11,6 @@ import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
-//TODO: implement toString!
-// UNDER CONSTRUCTION
-// NEEDS TEST
-// NEEDS CLEANING
 public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchAccessor.class);
     private RestHighLevelClient client;
@@ -33,37 +27,41 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
 
     @Override
     public void push(Map<String, Object> data) {
-        String documentId = Objects.toString(data.containsKey(idFieldPattern) ? data.get(idFieldPattern) : data.hashCode());
-        IndexRequest request = new IndexRequest(index, documentType, documentId);
-        request.source(data);
-        indexRequest(request);
-    }
-
-    private boolean exists(String id) {
-        boolean exists = false;
-        GetRequest request = new GetRequest(index, documentType, id);
-        // API owners recommended optimization: source fetching and stored fields features
-        // are turned off as irrelevant for exists request
-        request.fetchSourceContext(new FetchSourceContext(false));
-        request.storedFields("_none_");
-        try {
-            exists = client.exists(request);
+        String documentId;
+        if (data.containsKey(idFieldPattern)) {
+            documentId = Objects.toString(data.get(idFieldPattern));
+            data.remove(idFieldPattern);
         }
-        catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+        else {
+            documentId = Objects.toString(data.hashCode());
         }
-
-        return exists;
-    }
-
-    private void indexRequest(IndexRequest request) {
+        LOG.debug("Indexing/updating document {} with information: {}", documentId, data);
+        UpdateRequest request = new UpdateRequest(index, documentType, documentId);
+        request.upsert(data);
         try {
-            client.index(request);
+            client.update(request);
         }
         catch (IOException indexRequestError) {
             LOG.error("Index request error: ", indexRequestError);
             throw new UncheckedIOException(indexRequestError);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("");
+        try {
+            MainResponse info = client.info();
+            builder.append(info.getClusterName())
+                   .append('/')
+                   .append(info.getNodeName())
+                   .append('/')
+                   .append(index);
+        }
+        catch (IOException clusterInfoRequestError) {
+            LOG.error("Cluster information request error: ", clusterInfoRequestError);
+        }
+        return builder.toString();
     }
 
 }
