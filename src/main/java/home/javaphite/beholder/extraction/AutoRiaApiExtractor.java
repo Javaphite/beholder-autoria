@@ -61,7 +61,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
 
     // Returns adverts ids from particular page of search request.
     private List<String> getIdsFromPage(int pageIndex) {
-        String pageRequest = sourceUrl + "&page=" + pageIndex;
+        String pageRequest = sourceUrl + "&page=" + pageIndex + "&countpage=" + ADVERTS_PER_PAGE;
         String pageResponse = loadService.loadContent(pageRequest);
         JsonNode responseJson = getJsonTree(pageResponse);
         JsonNode jasonIdsArray = responseJson.findValue("ids");
