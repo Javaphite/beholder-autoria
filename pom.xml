@@ -4,7 +4,7 @@
     <groupId>home.javaphite</groupId>
     <artifactId>beholder-ms</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.9.0</version>
     <name>beholder-ms</name>
 
     <properties>
@@ -124,20 +124,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- ELASTICSEARCH+LUCENE TEST FRAMEWORK
-        (for tests and demo, DO NOT limit to test scope)
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-test-framework</artifactId>
-            <version>${lucene.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.elasticsearch.test</groupId>
-            <artifactId>framework</artifactId>
-            <version>${elasticsearch.version}</version>
-        </dependency> -->
     </dependencies>
 
     <build>
@@ -176,6 +162,27 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer implementation=
+                                                     "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>home.javaphite.beholder.demo.Demo</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="awsDemoHost" class="org.apache.http.HttpHost">
+        <constructor-arg name="hostname"
+                         value="search-beholder-demo-mwabk5i2wofjt6cglzmgyftyxi.eu-central-1.es.amazonaws.com"/>
+        <constructor-arg name="port" value="443"/>
+        <constructor-arg name="scheme" value="https"/>
+    </bean>
+
+    <bean id="restClientBuilder" class="org.elasticsearch.client.RestClient" factory-method="builder">
+        <constructor-arg ref="awsDemoHost"/>
+    </bean>
+
+    <bean id="restHighLevelClient" class="org.elasticsearch.client.RestHighLevelClient">
+        <constructor-arg ref="restClientBuilder"/>
+    </bean>
+
+    <bean id="loadServicePrototype" class="home.javaphite.beholder.load.LoadService" scope="prototype"/>
+
+    <bean id="elasticsearchAccessor" class="home.javaphite.beholder.storage.accessors.ElasticSearchAccessor">
+        <constructor-arg ref="restHighLevelClient"/>
+        <constructor-arg name="index" value="demo"/>
+        <constructor-arg name="docType" value="advert"/>
+        <constructor-arg name="idFieldPattern" value="autoId"/>
+    </bean>
+
+    <bean id="storageService" class="home.javaphite.beholder.storage.StorageService">
+        <constructor-arg ref="elasticsearchAccessor"/>
+    </bean>
+
+    <bean id="advertSchema" class="home.javaphite.beholder.demo.Demo" factory-method="getSchemaForMapping">
+        <constructor-arg name="filepath" value="file:src/main/resources/mapping/advert.json"/>
+        <constructor-arg name="idField" value="autoId"/>
+    </bean>
+
+    <bean id="extractorPrototype" class="home.javaphite.beholder.extraction.AutoRiaApiExtractor" scope="prototype">
+        <property name="loadService" ref="loadServicePrototype"/>
+        <property name="storageService" ref="storageService"/>
+    </bean>
+
+
+</beans>
