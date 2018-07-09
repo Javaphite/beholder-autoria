@@ -1,18 +1,18 @@
 package home.javaphite.beholder.extraction;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import home.javaphite.beholder.data.DataSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static home.javaphite.beholder.utils.JacksonUtils.getJsonTree;
 
 /**
  *  Extracts adverts information from <a href="https://AUTO.RIA.com">auto.ria.com</a> using its REST API. <br>
@@ -22,16 +22,37 @@ import java.util.Set;
 public class AutoRiaApiExtractor extends UrlDataExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(AutoRiaApiExtractor.class);
     private static final int ADVERTS_PER_PAGE = 100;
-    static String apiKey;
+    private String apiKey;
 
-    public AutoRiaApiExtractor(DataSchema schema, String searchRequest) {
+    public AutoRiaApiExtractor(String apiKey, DataSchema schema, String searchRequest) {
         super(schema, searchRequest);
+        this.apiKey = apiKey;
+    }
+
+    //TODO: add javaDoc comment
+    public static String prepareInfoRequest(String apiKey, String id) {
+        String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ADVERT_ID}";
+        String request = requestTemplate.replace("{API_KEY}", apiKey);
+        request = request.replace("{ADVERT_ID}", id);
+        LOG.debug("Prepared info request: {}", request);
+        return request;
+    }
+
+    //TODO: add javaDoc comment
+    public static String prepareSearchRequest(String apiKey, String... params) {
+        StringBuilder paramsBuilder = new StringBuilder(25);
+        Arrays.stream(params).forEach(param -> paramsBuilder.append('&').append(param));
+        String request = "https://developers.ria.com/auto/search?api_key={API_KEY}{PARAMETERS}";
+        request = request.replace("{API_KEY}", apiKey);
+        request = request.replace("{PARAMETERS}", paramsBuilder);
+        LOG.debug("Prepared search request: {}", request);
+        return request;
     }
 
     @Override
     public Set<Map<String, Object>> extract(String source) {
         LOG.info("Extracting adverts information for search request: {}", sourceUrl);
-        int ignored=0;
+        int ignored = 0;
         List<String> ids = getIds();
         List<JsonNode> adverts = new ArrayList<>();
         ids.forEach(id -> adverts.add(getAdvertInfo(id)));
@@ -41,7 +62,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
             Map<String, Object> dataEntry = dataSchema.createDataBlank();
             for (String field : dataEntry.keySet()) {
                 JsonNode value = advert.findValue(field);
-                dataEntry.put(field, value.asText()); // TODO: add type caster to use here
+                dataEntry.put(field, value.asText());
             }
             addValidIgnoreElse(dataEntries, dataEntry);
         }
@@ -82,7 +103,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
 
     // Retrieves advert information by id using auto.ria.com REST API
     private JsonNode getAdvertInfo(String advertId) {
-        String infoRequest = prepareInfoRequest(advertId);
+        String infoRequest = prepareInfoRequest(apiKey, advertId);
         String infoResponse = loadService.loadContent(infoRequest);
         return getJsonTree(infoResponse);
     }
@@ -93,27 +114,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
             dataEntries.add(dataEntry);
         }
         else {
-            LOG.warn("Invalid data entry {} not suits to schema {} and will be IGNORED!", dataEntry, dataSchema);
-        }
-    }
-
-    // Constructs advert info GET request by id.
-    private String prepareInfoRequest(String id) {
-        String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ORDER_ID}";
-        String infoRequest = requestTemplate.replace("{API_KEY}", apiKey);
-        infoRequest = infoRequest.replace("{ORDER_ID}", id);
-        return infoRequest;
-    }
-
-    // TODO: move this to Jackson utils class
-    private JsonNode getJsonTree(String jsonString) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readTree(jsonString);
-        }
-        catch (IOException jsonReadingError) {
-            LOG.error("JSON reading error: ", jsonReadingError);
-            throw new UncheckedIOException(jsonReadingError);
+            LOG.warn("Data entry {} not suits to schema {} and will be IGNORED!", dataEntry, dataSchema);
         }
     }
 }
