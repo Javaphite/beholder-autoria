@@ -1,0 +1,19 @@
+{
+  "properties":
+	  {
+		"markName": {"type": "keyword"},
+		"modelName": {"type": "keyword"},
+		"USD": {"type": "double"},
+        "addDate": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
+        },
+        "updateDate": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
+        },
+        "year": {"type": "long"},
+        "locationCityName": {"type": "keyword"},
+        "description": {"type": "text"}
+	  }
+}
