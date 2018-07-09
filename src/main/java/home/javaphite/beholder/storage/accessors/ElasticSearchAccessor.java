@@ -11,6 +11,7 @@ import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
+//TODO: add javaDoc comment
 public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchAccessor.class);
     private RestHighLevelClient client;
@@ -25,6 +26,7 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
         this.idFieldPattern = idFieldPattern;
     }
 
+    //TODO: add javaDoc comment
     @Override
     public void push(Map<String, Object> data) {
         String documentId;
@@ -37,7 +39,8 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
         }
         LOG.debug("Indexing/updating document {} with information: {}", documentId, data);
         UpdateRequest request = new UpdateRequest(index, documentType, documentId);
-        request.upsert(data);
+        request.doc(data);
+        request.docAsUpsert(true);
         try {
             client.update(request);
         }
