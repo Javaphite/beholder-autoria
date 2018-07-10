@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import home.javaphite.beholder.data.DataSchema;
 import home.javaphite.beholder.extraction.AutoRiaApiExtractor;
 import home.javaphite.beholder.extraction.UrlDataExtractor;
-import home.javaphite.beholder.load.LoadService;
 import home.javaphite.beholder.storage.StorageService;
 import home.javaphite.beholder.utils.JacksonUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -18,9 +17,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,7 @@ public final class Demo {
 
         if (!indexExists(indexName, client)) {
             createNewIndex(indexName, client);
-            createMapping("file:src/main/resources/mapping/advert.json", indexName, docType, client);
+            createMapping("/mapping/advert.json", indexName, docType, client);
         }
 
         String[] searchRequests = new String[3];
@@ -66,6 +67,7 @@ public final class Demo {
 
     }
 
+    // Checks if specified index exists in ES instance the client connected to
     private static boolean indexExists(String name, RestHighLevelClient client) {
         GetIndexRequest getIndexRequest = new GetIndexRequest();
         getIndexRequest.indices(name);
@@ -78,24 +80,25 @@ public final class Demo {
         }
     }
 
+    // Creates new index in ES instance the client connected to
     private static void createNewIndex(String name, RestHighLevelClient client) throws IOException {
         CreateIndexRequest newIndexRequest = new CreateIndexRequest(name);
         client.indices().create(newIndexRequest);
     }
 
+    // Creates new document type (mapping) for specified index in ES instance the client connected to
     private static void createMapping(String mappingJsonFilepath, String index, String typeName, RestHighLevelClient client)
             throws IOException {
-        LoadService loadService = new LoadService();
-        String mappingJson = loadService.loadContent(mappingJsonFilepath);
+        String mappingJson = getResourceContent(mappingJsonFilepath);
         PutMappingRequest request = new PutMappingRequest(index);
         request.type(typeName);
         request.source(mappingJson, XContentType.JSON);
         client.indices().putMapping(request);
     }
 
+    // Creates DataSchema of JSON file supplemented with id field
     private static DataSchema getSchemaForMapping(String filepath, String idField) {
-        LoadService loadService = new LoadService();
-        String jsonMapping = loadService.loadContent(filepath);
+        String jsonMapping = getResourceContent(filepath);
         JsonNode mappingTree = JacksonUtils.getJsonTree(jsonMapping);
         JsonNode fields = mappingTree.get("properties");
         Map<String, Class<?>> fieldsMap = new HashMap<>();
@@ -108,5 +111,15 @@ public final class Demo {
             throw new IllegalArgumentException("Invalid mapping file.");
         }
        return DataSchema.getSchema(fieldsMap);
+    }
+
+    // Reads text content of resource by file path
+    private static String getResourceContent(String resourcePath) {
+        StringBuilder content = new StringBuilder(80);
+        InputStream inStream = String.class.getResourceAsStream(resourcePath);
+        try (Scanner scan = new Scanner(inStream)) {
+            scan.forEachRemaining(content::append);
+        }
+        return content.toString();
     }
 }

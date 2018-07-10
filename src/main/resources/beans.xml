@@ -34,7 +34,7 @@
     </bean>
 
     <bean id="advertSchema" class="home.javaphite.beholder.demo.Demo" factory-method="getSchemaForMapping">
-        <constructor-arg name="filepath" value="file:src/main/resources/mapping/advert.json"/>
+        <constructor-arg name="filepath" value="/mapping/advert.json"/>
         <constructor-arg name="idField" value="autoId"/>
     </bean>
 
@@ -42,6 +42,5 @@
         <property name="loadService" ref="loadServicePrototype"/>
         <property name="storageService" ref="storageService"/>
     </bean>
-
 
 </beans>
