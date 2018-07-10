@@ -15,7 +15,6 @@ import java.util.function.UnaryOperator;
 public abstract class UrlDataExtractor {
     static final Logger LOG = LoggerFactory.getLogger(UrlDataExtractor.class);
     String sourceUrl;
-    private List<UnaryOperator<String>> filters = new LinkedList<>();
     DataSchema dataSchema;
     LoadService loadService;
     StorageService storageService;
@@ -25,15 +24,7 @@ public abstract class UrlDataExtractor {
         this.sourceUrl = sourceUrl;
     }
 
-    abstract Set<Map<String, Object>> extract(String source);
-
-    String applyFilters(String unfilteredString) {
-        String resultingString = unfilteredString;
-        for (UnaryOperator<String> filter: filters) {
-            resultingString = filter.apply(resultingString);
-        }
-        return resultingString;
-    }
+    abstract Set<Map<String, Object>> extract();
 
     /**
      * Template method for getting text content of URL defined source,
@@ -43,15 +34,9 @@ public abstract class UrlDataExtractor {
      */
     public void extractFromSource() {
         LOG.info("Getting content of {}", sourceUrl);
-        String uploadedText = loadService.loadContent(sourceUrl);
-        String filteredText = applyFilters(uploadedText);
-        Set<Map<String, Object>> dataLines = extract(filteredText);
+        Set<Map<String, Object>> dataLines = extract();
         dataLines.forEach(storageService::queue);
         LOG.info("Data of {} prepared and queued for storage", sourceUrl);
-    }
-
-    public void addFilter(UnaryOperator<String> filter) {
-        filters.add(filter);
     }
 
     public void setStorageService(StorageService storageService) {
