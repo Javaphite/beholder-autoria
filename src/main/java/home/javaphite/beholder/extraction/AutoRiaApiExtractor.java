@@ -64,7 +64,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
         String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ADVERT_ID}";
         String request = requestTemplate.replace("{API_KEY}", apiKey);
         request = request.replace("{ADVERT_ID}", id);
-        LOG.debug("Prepared info request: {}", request);
+        LOG.debug("Prepared info request for id: {}", id);
         return request;
     }
 
@@ -80,7 +80,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
         String request = "https://developers.ria.com/auto/search?api_key={API_KEY}{PARAMETERS}";
         request = request.replace("{API_KEY}", apiKey);
         request = request.replace("{PARAMETERS}", paramsBuilder);
-        LOG.debug("Prepared search request: {}", request);
+        LOG.debug("Prepared search request for parameters: {}", paramsBuilder);
         return request;
     }
 
