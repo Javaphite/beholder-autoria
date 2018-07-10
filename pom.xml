@@ -13,6 +13,7 @@
         <guava.version>23.0</guava.version>
         <lucene.version>7.3.1</lucene.version>
         <elasticsearch.version>6.3.0</elasticsearch.version>
+        <log4j-to-slf4j.version>2.9.1</log4j-to-slf4j.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
@@ -97,6 +98,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- LOG4J TO SLF4J BRIDGE FOR ES LOGGING -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>${log4j-to-slf4j.version}</version>
+        </dependency>
+
         <!-- SLF4J-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -134,6 +142,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
@@ -158,6 +167,7 @@
                 </dependencies>
 
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>

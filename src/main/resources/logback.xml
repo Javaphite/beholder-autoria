@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="PROJECT_LOG_DIR" value="logs" />
+    <timestamp key="timestamp" datePattern="yyyy-MM-dd_HH-mm-ss"/>
+    <!-- Each new test write logs into new file packed -->
+   <appender name="FILE"
+                      class="ch.qos.logback.core.FileAppender">
+                <file>${PROJECT_LOG_DIR}\logs.log</file>
+                  <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <pattern> %d{HH:mm:ss.SSS} [%thread] %level - %msg%n </pattern>
+                </encoder>
+   </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern> %d{HH:mm:ss.SSS} [%thread] %level - %msg%n </pattern>
+        </encoder>
+    </appender>
+
+<!-- Loggers configurations -->
+    <root level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="consoleLogger" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+</configuration>
+
