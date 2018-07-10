@@ -19,13 +19,13 @@
     </appender>
 
 <!-- Loggers configurations -->
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="consoleLogger" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
+    <logger name="debugLogger" level="DEBUG" additivity="true">
+        <appender-ref ref="FILE"/>
     </logger>
 
 </configuration>
