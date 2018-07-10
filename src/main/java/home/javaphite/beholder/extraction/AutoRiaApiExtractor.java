@@ -29,30 +29,14 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
         this.apiKey = apiKey;
     }
 
-    //TODO: add javaDoc comment
-    public static String prepareInfoRequest(String apiKey, String id) {
-        String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ADVERT_ID}";
-        String request = requestTemplate.replace("{API_KEY}", apiKey);
-        request = request.replace("{ADVERT_ID}", id);
-        LOG.debug("Prepared info request: {}", request);
-        return request;
-    }
-
-    //TODO: add javaDoc comment
-    public static String prepareSearchRequest(String apiKey, String... params) {
-        StringBuilder paramsBuilder = new StringBuilder(25);
-        Arrays.stream(params).forEach(param -> paramsBuilder.append('&').append(param));
-        String request = "https://developers.ria.com/auto/search?api_key={API_KEY}{PARAMETERS}";
-        request = request.replace("{API_KEY}", apiKey);
-        request = request.replace("{PARAMETERS}", paramsBuilder);
-        LOG.debug("Prepared search request: {}", request);
-        return request;
-    }
-
+    /**
+     * Extracts information about all relevant adverts defined by this instance's {@code searchRequest} property
+     * AND packs it to map representation according to this instance's {@code dataSchema} property.
+     * @return set of extracted and packed data entries.
+     */
     @Override
-    public Set<Map<String, Object>> extract(String source) {
+    Set<Map<String, Object>> extract() {
         LOG.info("Extracting adverts information for search request: {}", sourceUrl);
-        int ignored = 0;
         List<String> ids = getIds();
         List<JsonNode> adverts = new ArrayList<>();
         ids.forEach(id -> adverts.add(getAdvertInfo(id)));
@@ -68,6 +52,36 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
         }
         LOG.info("Adverts info extraction completed: prepared - {}, ignored - {}", dataEntries.size(), ids.size() - dataEntries.size());
         return dataEntries;
+    }
+
+    /**
+     * Helper method for preparation advert information requests in terms of auto.ria REST API
+     * @param apiKey API user individual key
+     * @param id advert id
+     * @return completed request {@link String}
+     */
+    public static String prepareInfoRequest(String apiKey, String id) {
+        String requestTemplate = "https://developers.ria.com/auto/info?api_key={API_KEY}&auto_id={ADVERT_ID}";
+        String request = requestTemplate.replace("{API_KEY}", apiKey);
+        request = request.replace("{ADVERT_ID}", id);
+        LOG.debug("Prepared info request: {}", request);
+        return request;
+    }
+
+    /**
+     * Helper method for preparation search requests in terms of auto.ria REST API
+     * @param apiKey API user individual key
+     * @param params search request parameters
+     * @return completed request {@link String}
+     */
+    public static String prepareSearchRequest(String apiKey, String... params) {
+        StringBuilder paramsBuilder = new StringBuilder(25);
+        Arrays.stream(params).forEach(param -> paramsBuilder.append('&').append(param));
+        String request = "https://developers.ria.com/auto/search?api_key={API_KEY}{PARAMETERS}";
+        request = request.replace("{API_KEY}", apiKey);
+        request = request.replace("{PARAMETERS}", paramsBuilder);
+        LOG.debug("Prepared search request: {}", request);
+        return request;
     }
 
     // Returns all adverts ids relevant to search request stored in extractor's sourceUrl.
@@ -109,6 +123,7 @@ public class AutoRiaApiExtractor extends UrlDataExtractor {
     }
 
     // Stores data in specified set if it fits to extractor's data schema, or ignores it else.
+    // Returns true if data valid, false if was ignored.
     private void addValidIgnoreElse(Set<Map<String, Object>> dataEntries, Map<String, Object> dataEntry) {
         if (dataSchema.isValid(dataEntry)) {
             dataEntries.add(dataEntry);
