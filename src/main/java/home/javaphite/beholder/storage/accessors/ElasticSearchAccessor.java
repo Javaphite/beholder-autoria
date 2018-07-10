@@ -11,7 +11,10 @@ import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Objects;
 
-//TODO: add javaDoc comment
+/**
+ * Provides one-way access (write-only) to concrete index/document type in ElasticSearch (ES) instance
+ * using RestHighLevelClient and ES REST API.
+ */
 public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchAccessor.class);
     private RestHighLevelClient client;
@@ -19,6 +22,13 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
     private String documentType;
     private String idFieldPattern;
 
+    /**
+     * Constructs ES accessor for defined existing index and document type in ES instance.
+     * @param client ES REST high-level client instance to be used for communication with ES.
+     * @param index name of existing index in ES instance.
+     * @param docType name of existing document type (mapping) in {@code index}.
+     * @param idFieldPattern string defining name of field to be used as document id (_id).
+     */
     public ElasticSearchAccessor(RestHighLevelClient client, String index, String docType, String idFieldPattern) {
         this.client = client;
         this.index = index;
@@ -26,7 +36,11 @@ public class ElasticSearchAccessor implements Accessor<Map<String, Object>> {
         this.idFieldPattern = idFieldPattern;
     }
 
-    //TODO: add javaDoc comment
+    /**
+     * Stores data to ES index as independent document of associated type.
+     * Uses {@code idFieldPattern} as document id or {@code hashcode} if no appropriate fields found.
+     * @param data field-value pairs of document.
+     */
     @Override
     public void push(Map<String, Object> data) {
         String documentId;
