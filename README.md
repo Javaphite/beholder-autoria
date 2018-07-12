@@ -9,7 +9,7 @@ Currently project limited to URL achievable sources and includes components and 
 
 You can visit Kibana plugin based on [AWS Elasticsearch Service](https://aws.amazon.com/en/elasticsearch-service) and see impersonal data from auto.ria.com about cars, motorbikes and cargo vehicles adverts for sale (information updates each hour). 
 
-[Link:](https://search-beholder-demo-mwabk5i2wofjt6cglzmgyftyxi.eu-central-1.es.amazonaws.com/_plugin/kibana/)
+Link:[https://search-beholder-demo-mwabk5i2wofjt6cglzmgyftyxi.eu-central-1.es.amazonaws.com/_plugin/kibana/](https://search-beholder-demo-mwabk5i2wofjt6cglzmgyftyxi.eu-central-1.es.amazonaws.com/_plugin/kibana/)
 
 *Warning!* Access is public and anonymous, but mostly in read-only mode, so you can sink in access restriction messages if try to change something important. 
 
