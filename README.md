@@ -32,11 +32,11 @@ You should do next few steps:
 - Application parameter (it is only one and not optional): your API KEY
 
 ### If you want to build your own microservice for gathering information from another sources and/or to use storage other than Elasticsearch instance:
-1. To gather information from custom source:
+1. **To gather information from custom source:**
 Write your own subclass of UrlDataExtractor from home.javaphite.beholder.extraction package and override only one method – extract().
-2. To store information to custom storage: 
+2. **To store information to custom storage: **
  	Write your own implementation of Accessor interface from home.javaphite.beholder.storage.accessors package and implement its push method.
-3. Build your own application using new components
+3. Build your own application using new components.
 
 ## Build on:
 [Maven](https://maven.apache.org)
