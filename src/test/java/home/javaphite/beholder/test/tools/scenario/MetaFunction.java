@@ -9,19 +9,10 @@ package home.javaphite.beholder.test.tools.scenario;
  * rather than that one and it's sub-interfaces;
  * @param <R> function return type;
  */
+
+@FunctionalInterface
 public interface MetaFunction<R> {
-    default <X> R apply(X value) {
-        R result = ((UnaryFunction<X, R>) this).applyForParameters(value);
-        return result;
-    }
 
-    default <X, Y> R apply(X xValue, Y yValue) {
-        R result = ((BinaryFunction<X, Y, R>) this).applyForParameters(xValue, yValue);
-        return result;
-    }
+    R apply(Object... params);
 
-    default <X, Y, Z> R apply(X xValue, Y yValue, Z zValue) {
-        R result = ((TernaryFunction<X, Y, Z, R>) this).applyForParameters(xValue, yValue, zValue);
-        return result;
-    }
 }
