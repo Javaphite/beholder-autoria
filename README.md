@@ -1,6 +1,6 @@
 # BEHOLDER-MS
 
-Pet-project about simple microservice for gathering, transforming and storing information collected from web. 
+Pet-project about simple microservice for extraction, transforming and loading information (ETL) collected from web. 
 Currently project limited to URL achievable sources and includes components and demo application for gathering adverts information from [AUTO.RIA](https://auto.ria.com) through REST API and storing it to [Elasticsearch](https://www.elastic.co) instance.
 
 ## Getting started
