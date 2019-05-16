@@ -5,7 +5,7 @@ Currently project limited to URL achievable sources and includes components and 
 
 ## Getting started
 
-### If you just want to see results of demo application
+### If you just want to see results of demo application (CURRENTLY UNAVAILABLE)
 
 You can visit Kibana plugin based on [AWS Elasticsearch Service](https://aws.amazon.com/en/elasticsearch-service) and see impersonal data from auto.ria.com about cars, motorbikes and cargo vehicles adverts for sale (information updates each hour). 
 
